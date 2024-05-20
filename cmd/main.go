@@ -34,8 +34,9 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	konfluxciv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
+	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
 	"github.com/konflux-ci/mintmaker/internal/controller"
+	appstudiov1alpha1 "github.com/redhat-appstudio/application-api/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -47,7 +48,8 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(konfluxciv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(appstudiov1alpha1.AddToScheme(scheme))
+	utilruntime.Must(mmv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -122,11 +124,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controller.MintMakerConfigReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "MintMakerConfig")
+	if err = (controller.NewDependencyUpdateCheckReconciler(
+		mgr.GetClient(), mgr.GetScheme(), mgr.GetEventRecorderFor("DependencyUpdateCheckController"),
+	)).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "DependencyUpdateCheck")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

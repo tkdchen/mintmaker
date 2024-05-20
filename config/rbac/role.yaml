@@ -5,9 +5,9 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - konflux-ci.mintmaker.redhat.com
+  - appstudio.redhat.com
   resources:
-  - mintmakerconfigs
+  - dependencyupdatechecks
   verbs:
   - create
   - delete
@@ -17,15 +17,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - konflux-ci.mintmaker.redhat.com
+  - appstudio.redhat.com
   resources:
-  - mintmakerconfigs/finalizers
+  - dependencyupdatechecks/finalizers
   verbs:
   - update
 - apiGroups:
-  - konflux-ci.mintmaker.redhat.com
+  - appstudio.redhat.com
   resources:
-  - mintmakerconfigs/status
+  - dependencyupdatechecks/status
   verbs:
   - get
   - patch

@@ -1,13 +1,19 @@
-# mintmaker
-// TODO(user): Add simple overview of use/purpose
+# MintMaker
+MintMaker is designed to automate the process of checking and updating dependencies for components in Konflux. It utilizes Renovate, a dependency update tool.
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+
+MintMaker introduces the DependencyUpdateCheck custom resource, which acts as a trigger for the dependency update process. When a DependencyUpdateCheck CR is created, MintMaker springs into action, examining all components within Konflux for dependency updates.
+
+Konflux components originate from repositories on two types of platforms, GitHub and GitLab. MintMaker adapts its functionality based on the platform:
+
+* GitHub: If the repository has Konflux's Pipeline as Code GitHub Application installed, MintMaker utilizes the token generated from the application to run Renovate.
+* GitLab: MintMaker scans the component's namespace for a secret containing the Renovate token. Upon finding the token, MintMaker employs it to execute Renovate for components within the same namespace.
 
 ## Getting Started
 
 ### Prerequisites
-- go version v1.20.0+
+- go version v1.21.0+
 - docker version 17.03+.
 - kubectl version v1.11.3+.
 - Access to a Kubernetes v1.11.3+ cluster.

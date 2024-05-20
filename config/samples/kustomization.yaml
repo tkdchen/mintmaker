@@ -1,4 +1,4 @@
 ## Append samples of your project ##
 resources:
-- konflux-ci_v1alpha1_mintmakerconfig.yaml
+- appstudio_v1alpha1_dependencyupdatecheck.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
