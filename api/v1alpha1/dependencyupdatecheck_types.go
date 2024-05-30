@@ -23,17 +23,17 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// MintMakerConfigSpec defines the desired state of MintMakerConfig
-type MintMakerConfigSpec struct {
+// DependencyUpdateCheckSpec defines the desired state of DependencyUpdateCheck
+type DependencyUpdateCheckSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of MintMakerConfig. Edit mintmakerconfig_types.go to remove/update
+	// Foo is an example field of DependencyUpdateCheck. Edit dependencyupdatecheck_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
 
-// MintMakerConfigStatus defines the observed state of MintMakerConfig
-type MintMakerConfigStatus struct {
+// DependencyUpdateCheckStatus defines the observed state of DependencyUpdateCheck
+type DependencyUpdateCheckStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +41,24 @@ type MintMakerConfigStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// MintMakerConfig is the Schema for the mintmakerconfigs API
-type MintMakerConfig struct {
+// DependencyUpdateCheck is the Schema for the dependencyupdatechecks API
+type DependencyUpdateCheck struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   MintMakerConfigSpec   `json:"spec,omitempty"`
-	Status MintMakerConfigStatus `json:"status,omitempty"`
+	Spec   DependencyUpdateCheckSpec   `json:"spec,omitempty"`
+	Status DependencyUpdateCheckStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// MintMakerConfigList contains a list of MintMakerConfig
-type MintMakerConfigList struct {
+// DependencyUpdateCheckList contains a list of DependencyUpdateCheck
+type DependencyUpdateCheckList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []MintMakerConfig `json:"items"`
+	Items           []DependencyUpdateCheck `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&MintMakerConfig{}, &MintMakerConfigList{})
+	SchemeBuilder.Register(&DependencyUpdateCheck{}, &DependencyUpdateCheckList{})
 }

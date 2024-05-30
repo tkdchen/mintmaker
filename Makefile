@@ -28,8 +28,8 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # This variable is used to construct full image tags for bundle and catalog images.
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# mintmaker.redhat.com/mintmaker-bundle:$VERSION and mintmaker.redhat.com/mintmaker-catalog:$VERSION.
-IMAGE_TAG_BASE ?= mintmaker.redhat.com/mintmaker
+# redhat.com/mintmaker-bundle:$VERSION and redhat.com/mintmaker-catalog:$VERSION.
+IMAGE_TAG_BASE ?= redhat.com/mintmaker
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -48,7 +48,7 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.34.1
+OPERATOR_SDK_VERSION ?= v1.34.2
 
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest

@@ -1,20 +1,20 @@
-# permissions for end users to edit mintmakerconfigs.
+# permissions for end users to edit dependencyupdatechecks.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/instance: mintmakerconfig-editor-role
+    app.kubernetes.io/instance: dependencyupdatecheck-editor-role
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: mintmaker
     app.kubernetes.io/part-of: mintmaker
     app.kubernetes.io/managed-by: kustomize
-  name: mintmakerconfig-editor-role
+  name: dependencyupdatecheck-editor-role
 rules:
 - apiGroups:
-  - konflux-ci.mintmaker.redhat.com
+  - appstudio.redhat.com
   resources:
-  - mintmakerconfigs
+  - dependencyupdatechecks
   verbs:
   - create
   - delete
@@ -24,8 +24,8 @@ rules:
   - update
   - watch
 - apiGroups:
-  - konflux-ci.mintmaker.redhat.com
+  - appstudio.redhat.com
   resources:
-  - mintmakerconfigs/status
+  - dependencyupdatechecks/status
   verbs:
   - get
