@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -27,10 +28,12 @@ import (
 	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
 
 	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
+	. "github.com/konflux-ci/mintmaker/pkg/common"
 	"github.com/konflux-ci/mintmaker/pkg/git"
 	"github.com/konflux-ci/mintmaker/pkg/k8s"
 	"github.com/konflux-ci/mintmaker/pkg/renovate"
@@ -67,6 +70,33 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	log := ctrllog.FromContext(ctx).WithName("DependencyUpdateCheckController")
 	ctx = ctrllog.IntoContext(ctx, log)
 
+	dependencyupdatecheck := &mmv1alpha1.DependencyUpdateCheck{}
+	err := r.client.Get(ctx, req.NamespacedName, dependencyupdatecheck)
+	if err != nil {
+		if errors.IsNotFound(err) {
+			return ctrl.Result{}, nil
+		}
+	}
+
+	// If the DependencyUpdateCheck has been handled before, skip it
+	if _, processed := dependencyupdatecheck.Annotations[MintMakerProcessedAnnotationName]; processed {
+		log.Info(fmt.Sprintf("DependencyUpdateCheck has been processed: %v", req.NamespacedName))
+		return ctrl.Result{}, nil
+	}
+
+	// Update the DependencyUpdateCheck to add a processed annotation
+	log.Info(fmt.Sprintf("new DependencyUpdateCheck found: %v", req.NamespacedName))
+	if dependencyupdatecheck.Annotations == nil {
+		dependencyupdatecheck.Annotations = map[string]string{}
+	}
+	dependencyupdatecheck.Annotations[MintMakerProcessedAnnotationName] = "true"
+
+	err = r.client.Update(ctx, dependencyupdatecheck)
+	if err != nil {
+		log.Error(err, "failed to update DependencyUpdateCheck annotations")
+		return ctrl.Result{}, nil
+	}
+
 	// Get Components
 	componentList := &appstudiov1alpha1.ComponentList{}
 	if err := r.client.List(ctx, componentList, &client.ListOptions{}); err != nil {
@@ -99,7 +129,7 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	log.Info("executing renovate tasks", "tasks", len(tasks))
-	err := r.jobCoordinator.ExecuteWithLimits(ctx, tasks)
+	err = r.jobCoordinator.ExecuteWithLimits(ctx, tasks)
 	if err != nil {
 		log.Error(err, "failed to create a job")
 	}

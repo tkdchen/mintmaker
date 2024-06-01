@@ -82,7 +82,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 			deleteConfigMap(renovateConfigMapKey)
 		})
 
-		It("It should trigger job for GitHub component", func() {
+		It("should trigger job for GitHub component", func() {
 			installedRepositoryUrls := []string{
 				"https://github.com/konfluxtest/repo",
 			}
@@ -98,7 +98,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
 
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(1))
 
@@ -106,7 +106,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 			deleteDependencyUpdateCheck(dependencyUpdateCheckKey)
 		})
 
-		It("It should trigger job for GitLab component", func() {
+		It("should trigger job for GitLab component", func() {
 			installedRepositoryUrls := []string{
 				"https://gitlab.com/konfluxtest/repo",
 			}
@@ -126,12 +126,36 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(1))
 
 			deleteComponent(componentKey)
 			deleteDependencyUpdateCheck(dependencyUpdateCheckKey)
 			deleteSecret(renovateSecretKey)
+		})
+
+		It("should not trigger job for DependencyUpdateCheck CR which has been processed before", func() {
+			installedRepositoryUrls := []string{
+				"https://github.com/konfluxtest/repo",
+			}
+			github.GetAllAppInstallations = func(appIdStr string, privateKeyPem []byte) ([]github.ApplicationInstallation, string, error) {
+				repositories := generateRepositories(installedRepositoryUrls)
+				return []github.ApplicationInstallation{generateInstallation(repositories)}, "slug", nil
+			}
+
+			// Create a component with GitHub repository
+			createNamespace(defaultNS)
+			componentKey := types.NamespacedName{Namespace: defaultNS, Name: "test-component"}
+			createComponent(componentKey, "test-application", "https://github.com/konfluxtest/repo", "main", "/")
+
+			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
+			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, true)
+
+			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(0))
+
+			deleteComponent(componentKey)
+			deleteDependencyUpdateCheck(dependencyUpdateCheckKey)
 		})
 	})
 })
