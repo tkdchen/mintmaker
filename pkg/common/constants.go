@@ -2,6 +2,8 @@ package common
 
 const (
 	MintMakerNamespaceName = "mintmaker"
+	//
+	MintMakerProcessedAnnotationName = "mintmaker.appstudio.redhat.com/processed"
 	// Pipelines as Code GitHub appliaction configuration secret name.
 	// The secret is located in Build Service namespace.
 	PipelinesAsCodeGitHubAppSecretName = "pipelines-as-code-secret"

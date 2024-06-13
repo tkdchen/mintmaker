@@ -252,15 +252,21 @@ func deleteComponent(resourceKey types.NamespacedName) {
 	}, timeout, interval).Should(BeTrue())
 }
 
-func createDependencyUpdateCheck(resourceKey types.NamespacedName) {
+func createDependencyUpdateCheck(resourceKey types.NamespacedName, processed bool) {
+	annotations := map[string]string{}
+	if processed {
+		annotations[MintMakerProcessedAnnotationName] = "true"
+	}
+
 	dependencyUpdateCheck := &mmv1alpha1.DependencyUpdateCheck{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "appstudio.redhat.com/v1alpha1",
 			Kind:       "DependencyUpdateCheck",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      resourceKey.Name,
-			Namespace: resourceKey.Namespace,
+			Name:        resourceKey.Name,
+			Namespace:   resourceKey.Namespace,
+			Annotations: annotations,
 		},
 		Spec: mmv1alpha1.DependencyUpdateCheckSpec{},
 	}
