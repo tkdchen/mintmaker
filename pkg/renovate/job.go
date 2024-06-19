@@ -26,7 +26,7 @@ const (
 	InstallationsPerJobEnvName = "RENOVATE_INSTALLATIONS_PER_JOB"
 	TimeToLiveOfJob            = 24 * time.Hour
 	RenovateImageEnvName       = "RENOVATE_IMAGE"
-	DefaultRenovateImageUrl    = "quay.io/redhat-appstudio/renovate:v37.74.1"
+	DefaultRenovateImageUrl    = "quay.io/konflux-ci/mintmaker-renovate-image:latest"
 )
 
 // JobCoordinator is responsible for creating and managing renovate k8s jobs
