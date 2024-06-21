@@ -70,6 +70,11 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	log := ctrllog.FromContext(ctx).WithName("DependencyUpdateCheckController")
 	ctx = ctrllog.IntoContext(ctx, log)
 
+	// Ignore CRs that are not from the mintmaker namespace
+	if req.Namespace != MintMakerNamespaceName {
+		return ctrl.Result{}, nil
+	}
+
 	dependencyupdatecheck := &mmv1alpha1.DependencyUpdateCheck{}
 	err := r.client.Get(ctx, req.NamespacedName, dependencyupdatecheck)
 	if err != nil {
