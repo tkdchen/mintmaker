@@ -6,9 +6,9 @@ require (
 	github.com/bradleyfalzon/ghinstallation/v2 v2.10.0
 	github.com/go-logr/logr v1.2.4
 	github.com/google/go-github/v45 v45.2.0
+	github.com/konflux-ci/application-api v0.0.0-20240527211352-be061932d497
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.10
-	github.com/redhat-appstudio/application-api v0.0.0-20240326104708-c647c0bdcda5
 	github.com/stretchr/testify v1.8.2
 	github.com/xanzy/go-gitlab v0.105.0
 	golang.org/x/oauth2 v0.8.0

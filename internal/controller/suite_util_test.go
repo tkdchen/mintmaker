@@ -33,7 +33,7 @@ import (
 
 	gh "github.com/google/go-github/v45/github"
 	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
-	appstudiov1alpha1 "github.com/redhat-appstudio/application-api/api/v1alpha1"
+	appstudiov1alpha1 "github.com/konflux-ci/application-api/api/v1alpha1"
 
 	. "github.com/konflux-ci/mintmaker/pkg/common"
 	"github.com/konflux-ci/mintmaker/pkg/git/github"
