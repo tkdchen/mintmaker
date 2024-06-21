@@ -70,6 +70,11 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	log := ctrllog.FromContext(ctx).WithName("DependencyUpdateCheckController")
 	ctx = ctrllog.IntoContext(ctx, log)
 
+	// Ignore CRs that are not from the mintmaker namespace
+	if req.Namespace != MintMakerNamespaceName {
+		return ctrl.Result{}, nil
+	}
+
 	dependencyupdatecheck := &mmv1alpha1.DependencyUpdateCheck{}
 	err := r.client.Get(ctx, req.NamespacedName, dependencyupdatecheck)
 	if err != nil {
@@ -103,6 +108,14 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 		log.Error(err, "failed to list Components")
 		return ctrl.Result{}, err
 	}
+
+	numComponents := len(componentList.Items)
+	log.Info("found components", "components", numComponents)
+
+	if numComponents == 0 {
+		return ctrl.Result{}, nil
+	}
+
 	var scmComponents []*git.ScmComponent
 	for _, component := range componentList.Items {
 		gitProvider, err := getGitProvider(component)
@@ -126,6 +139,10 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 		if len(newTasks) > 0 {
 			tasks = append(tasks, newTasks...)
 		}
+	}
+
+	if len(tasks) == 0 {
+		return ctrl.Result{}, nil
 	}
 
 	log.Info("executing renovate tasks", "tasks", len(tasks))
