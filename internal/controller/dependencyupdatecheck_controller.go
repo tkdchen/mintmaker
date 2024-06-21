@@ -37,7 +37,7 @@ import (
 	"github.com/konflux-ci/mintmaker/pkg/git"
 	"github.com/konflux-ci/mintmaker/pkg/k8s"
 	"github.com/konflux-ci/mintmaker/pkg/renovate"
-	appstudiov1alpha1 "github.com/redhat-appstudio/application-api/api/v1alpha1"
+	appstudiov1alpha1 "github.com/konflux-ci/application-api/api/v1alpha1"
 )
 
 // DependencyUpdateCheckReconciler reconciles a DependencyUpdateCheck object
