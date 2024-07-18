@@ -71,7 +71,7 @@ func newGithubTask(slug string, token string, repositories []*Repository) *Task 
 		Platform:     "github",
 		Endpoint:     git.BuildAPIEndpoint("github").APIEndpoint("github.com"),
 		Username:     fmt.Sprintf("%s[bot]", slug),
-		GitAuthor:    fmt.Sprintf("%s <123456+%s[bot]@users.noreply.github.com>", slug, slug),
+		GitAuthor:    fmt.Sprintf("%s <126015336+%s[bot]@users.noreply.github.com>", slug, slug),
 		Token:        token,
 		Repositories: repositories,
 	}
