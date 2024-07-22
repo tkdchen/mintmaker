@@ -53,7 +53,7 @@ func NewJobCoordinator(client client.Client, scheme *runtime.Scheme) *JobCoordin
 	if renovateImageUrl == "" {
 		renovateImageUrl = DefaultRenovateImageUrl
 	}
-	return &JobCoordinator{tasksPerJob: tasksPerJobInt, renovateImageUrl: renovateImageUrl, client: client, scheme: scheme, debug: false}
+	return &JobCoordinator{tasksPerJob: tasksPerJobInt, renovateImageUrl: renovateImageUrl, client: client, scheme: scheme, debug: true}
 }
 
 // getCAConfigMap returns the first ConfigMap found in mintmaker namespace
