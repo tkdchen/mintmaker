@@ -10,7 +10,7 @@
   "requireConfig": "optional",
   "platformCommit": true,
   "autodiscover": false,
-  "enabledManagers": ["tekton", "dockerfile", "rpm", "git-submodules"],
+  "enabledManagers": ["tekton", "dockerfile", "rpm", "git-submodules", "regex"],
   "tekton": {
     "fileMatch": ["\\.yaml$","\\.yml$"],
     "includePaths": [".tekton/**"],
