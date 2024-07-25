@@ -10,7 +10,9 @@
   "requireConfig": "optional",
   "platformCommit": true,
   "autodiscover": false,
-  "enabledManagers": ["tekton", "dockerfile", "rpm", "git-submodules", "regex"],
+  "enabledManagers": ["tekton", "dockerfile", "rpm", "git-submodules", "regex", "argocd", "crossplane",
+                      "fleet", "flux", "helm-requirements", "helm-values", "helmfile", "helmsman", "helmv3",
+                      "jsonnet-bundler", "kubernetes", "kustomize"],
   "tekton": {
     "fileMatch": ["\\.yaml$","\\.yml$"],
     "includePaths": [".tekton/**"],
@@ -47,6 +49,54 @@
     "rebaseWhen": "behind-base-branch",
     "branchTopic": "lock-file-maintenance",
     "schedule": ["at any time"]
+  },
+  "argocd": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "crossplane": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "fleet": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "flux": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "helm-requirements": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "helm-values": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "helmfile": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "helmsman": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "helmv3": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "jsonnet-bundler": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "kubernetes": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "kustomize": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
   },
   "forkProcessing": "enabled",
   "dependencyDashboard": false
