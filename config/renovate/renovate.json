@@ -41,7 +41,9 @@
     ]
   },
   "git-submodules": {
-    "enabled": true
+    "enabled": true,
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
   },
   "lockFileMaintenance": {
     "enabled": true,
