@@ -16,7 +16,6 @@
     "tekton",
     "dockerfile",
     "rpm",
-    "git-submodules",
     "regex",
     "argocd",
     "crossplane",
@@ -29,7 +28,16 @@
     "helmv3",
     "jsonnet-bundler",
     "kubernetes",
-    "kustomize"
+    "kustomize",
+    "asdf",
+    "fvm",
+    "git-submodules",
+    "hermit",
+    "homebrew",
+    "nix",
+    "osgi",
+    "pre-commit",
+    "vendir"
   ],
   "tekton": {
     "fileMatch": [
@@ -133,6 +141,40 @@
     "branchPrefix": "konflux/mintmaker/"
   },
   "kustomize": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "asdf": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "fvm": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "hermit": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "homebrew": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "nix": {
+    "enabled": true,
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "osgi": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pre-commit": {
+    "enabled": true,
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "vendir": {
     "additionalBranchPrefix": "{{baseBranch}}/",
     "branchPrefix": "konflux/mintmaker/"
   },
