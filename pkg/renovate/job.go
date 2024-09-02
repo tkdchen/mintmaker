@@ -2,6 +2,7 @@ package renovate
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
@@ -79,6 +80,93 @@ func (j *JobCoordinator) getCAConfigMap(ctx context.Context) (*corev1.ConfigMap,
 	return nil, nil
 }
 
+// Create a secret that merges all secret with the label:
+// mintmaker.appstudio.redhat.com/secret-type: registry
+// and return the new secret
+func (j *JobCoordinator) createMergedPullSecret(ctx context.Context) (*corev1.Secret, error) {
+	log := logger.FromContext(ctx)
+
+	secretList := &corev1.SecretList{}
+	labelSelector := client.MatchingLabels{"mintmaker.appstudio.redhat.com/secret-type": "registry"}
+	listOptions := []client.ListOption{
+		client.InNamespace(MintMakerNamespaceName),
+		labelSelector,
+	}
+
+	err := j.client.List(ctx, secretList, listOptions...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(secretList.Items) == 0 {
+		// No secrets to merge
+		return nil, nil
+	}
+
+	log.Info(fmt.Sprintf("Found %d secrets to merge", len(secretList.Items)))
+
+	mergedAuths := make(map[string]interface{})
+	for _, secret := range secretList.Items {
+		if secret.Type == corev1.SecretTypeDockerConfigJson {
+			data, exists := secret.Data[".dockerconfigjson"]
+			if !exists {
+				// No .dockerconfigjson section
+				log.Info("Found secret without .dockerconfigjson section")
+				return nil, nil
+			}
+
+			var dockerConfig map[string]interface{}
+			if err := json.Unmarshal(data, &dockerConfig); err != nil {
+				return nil, err
+			}
+
+			auths, exists := dockerConfig["auths"].(map[string]interface{})
+			if !exists {
+				continue
+			}
+
+			for registry, creds := range auths {
+				mergedAuths[registry] = creds
+			}
+		}
+	}
+
+	mergedDockerConfig := map[string]interface{}{
+		"auths": mergedAuths,
+	}
+
+	if len(mergedAuths) == 0 {
+		log.Info("Merged auths empty, skipping creation of secret")
+		return nil, nil
+	}
+
+	mergedConfigJson, err := json.Marshal(mergedDockerConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	timestamp := time.Now().Unix()
+	name := fmt.Sprintf("renovate-image-pull-secrets-%d-%s", timestamp, RandomString(5))
+
+	newSecret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: MintMakerNamespaceName,
+		},
+		Type: corev1.SecretTypeDockerConfigJson,
+		Data: map[string][]byte{
+			".dockerconfigjson": []byte(mergedConfigJson),
+		},
+	}
+
+	if err := j.client.Create(ctx, newSecret); err != nil {
+		return nil, err
+	}
+
+	return newSecret, nil
+}
+
 func (j *JobCoordinator) Execute(ctx context.Context, tasks []*Task) error {
 
 	if len(tasks) == 0 {
@@ -111,6 +199,8 @@ func (j *JobCoordinator) Execute(ctx context.Context, tasks []*Task) error {
 	if len(renovateCmd) == 0 {
 		return nil
 	}
+
+	registry_secret, err := j.createMergedPullSecret(ctx)
 
 	secret := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -224,15 +314,48 @@ func (j *JobCoordinator) Execute(ctx context.Context, tasks []*Task) error {
 		job.Spec.Template.Spec.Containers[0].VolumeMounts = append(job.Spec.Template.Spec.Containers[0].VolumeMounts, caVolumeMount)
 	}
 
+	if registry_secret != nil {
+		registrySecretVolume := corev1.Volume{
+			Name: "registry-secrets",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: registry_secret.Name,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  ".dockerconfigjson",
+							Path: "config.json",
+						},
+					},
+				},
+			},
+		}
+		registrySecretMount := corev1.VolumeMount{
+			Name:      "registry-secrets",
+			MountPath: "/.docker",
+			ReadOnly:  true,
+		}
+		job.Spec.Template.Spec.Volumes = append(job.Spec.Template.Spec.Volumes, registrySecretVolume)
+		job.Spec.Template.Spec.Containers[0].VolumeMounts = append(job.Spec.Template.Spec.Containers[0].VolumeMounts, registrySecretMount)
+	}
+
 	// Create the job
 	if err := j.client.Create(ctx, job); err != nil {
 		return err
 	}
 	log.Info("renovate job created", "jobname", job.Name, "tasks", len(tasks))
+
+	// Set ownership so all resources get deleted once the job is deleted
 	if err := controllerutil.SetOwnerReference(job, secret, j.scheme); err != nil {
 		return err
 	}
 	if err := j.client.Update(ctx, secret); err != nil {
+		return err
+	}
+
+	if err := controllerutil.SetOwnerReference(job, registry_secret, j.scheme); err != nil {
+		return err
+	}
+	if err := j.client.Update(ctx, registry_secret); err != nil {
 		return err
 	}
 
