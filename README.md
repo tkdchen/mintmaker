@@ -1,5 +1,5 @@
 # MintMaker
-MintMaker is designed to automate the process of checking and updating dependencies for components in Konflux. It utilizes Renovate, a dependency update tool.
+MintMaker is designed to automate the process of checking and updating dependencies for components in Konflux. It utilizes [https://docs.renovatebot.com/](Renovate), a dependency update tool.
 
 ## Description
 
@@ -73,11 +73,14 @@ make undeploy
 ```
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+To contribute to MintMaker you need to be part of the [MintMaker Maintainers](https://github.com/orgs/konflux-ci/teams/mintmaker-maintainers) team.
 
 **NOTE:** Run `make help` for more information on all potential `make` targets
 
 More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+
+## Additional documentation
+You can find additional documentation here: [MintMaker docs](https://redhat-exd-rebuilds.github.io/mintmaker-docs/).
 
 ## License
 
