@@ -353,11 +353,13 @@ func (j *JobCoordinator) Execute(ctx context.Context, tasks []*Task) error {
 		return err
 	}
 
-	if err := controllerutil.SetOwnerReference(job, registry_secret, j.scheme); err != nil {
-		return err
-	}
-	if err := j.client.Update(ctx, registry_secret); err != nil {
-		return err
+	if registry_secret != nil {
+		if err := controllerutil.SetOwnerReference(job, registry_secret, j.scheme); err != nil {
+			return err
+		}
+		if err := j.client.Update(ctx, registry_secret); err != nil {
+			return err
+		}
 	}
 
 	if err := controllerutil.SetOwnerReference(job, configMap, j.scheme); err != nil {
