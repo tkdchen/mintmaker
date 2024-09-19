@@ -25,6 +25,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 
+	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
 	. "github.com/konflux-ci/mintmaker/pkg/common"
 	"github.com/konflux-ci/mintmaker/pkg/git/github"
 	"github.com/konflux-ci/mintmaker/pkg/renovate"
@@ -98,7 +99,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false, nil)
 
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(1))
 
@@ -126,7 +127,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false, nil)
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(1))
 
 			deleteComponent(componentKey)
@@ -150,7 +151,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey, true)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, true, nil)
 
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(0))
 
@@ -174,7 +175,7 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "default" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: defaultNS, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false, nil)
 
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(0))
 
@@ -199,7 +200,31 @@ var _ = Describe("DependencyUpdateCheck Controller", func() {
 
 			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
 			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
-			createDependencyUpdateCheck(dependencyUpdateCheckKey, false)
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false, nil)
+
+			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(0))
+
+			deleteComponent(componentKey)
+			deleteDependencyUpdateCheck(dependencyUpdateCheckKey)
+		})
+
+		It("should not trigger job for DependencyUpdateCheck CR which has listed components", func() {
+			installedRepositoryUrls := []string{
+				"https://github.com/konfluxtest/repo",
+			}
+			github.GetAllAppInstallations = func(appIdStr string, privateKeyPem []byte) ([]github.ApplicationInstallation, string, error) {
+				repositories := generateRepositories(installedRepositoryUrls)
+				return []github.ApplicationInstallation{generateInstallation(repositories)}, "slug", nil
+			}
+
+			// Create a component with GitHub repository
+			createNamespace(defaultNS)
+			componentKey := types.NamespacedName{Namespace: defaultNS, Name: "test-component"}
+			createComponent(componentKey, "test-application", "https://github.com/konfluxtest/repo", "main", "/")
+
+			// Create a DependencyUpdateCheck CR in "mintmaker" namespace
+			dependencyUpdateCheckKey := types.NamespacedName{Namespace: MintMakerNamespaceName, Name: "dependencyupdatecheck-sample"}
+			createDependencyUpdateCheck(dependencyUpdateCheckKey, false, []mmv1alpha1.WorkspaceSpec{{Workspace: "workspace1-tenant", Applications: nil}})
 
 			Eventually(listJobs).WithArguments(MintMakerNamespaceName).WithTimeout(timeout).Should(HaveLen(0))
 

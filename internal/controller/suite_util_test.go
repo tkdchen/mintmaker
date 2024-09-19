@@ -267,7 +267,7 @@ func disableComponentMintmaker(resourceKey types.NamespacedName) {
 	getComponent(resourceKey)
 }
 
-func createDependencyUpdateCheck(resourceKey types.NamespacedName, processed bool) {
+func createDependencyUpdateCheck(resourceKey types.NamespacedName, processed bool, workspaces []mmv1alpha1.WorkspaceSpec) {
 	annotations := map[string]string{}
 	if processed {
 		annotations[MintMakerProcessedAnnotationName] = "true"
@@ -285,6 +285,10 @@ func createDependencyUpdateCheck(resourceKey types.NamespacedName, processed boo
 		},
 		Spec: mmv1alpha1.DependencyUpdateCheckSpec{},
 	}
+	if len(workspaces) > 0 {
+		dependencyUpdateCheck.Spec.Workspaces = workspaces
+	}
+
 	Expect(k8sClient.Create(ctx, dependencyUpdateCheck)).Should(Succeed())
 	getDependencyUpdateCheck(resourceKey)
 }

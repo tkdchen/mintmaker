@@ -20,6 +20,36 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+// +kubebuilder:validation:MaxLength=63
+type Component string
+
+type ApplicationSpec struct {
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+	// Specifies the name of the application for which to run Mintmaker.
+	// Required.
+	// +required
+	Application string `json:"application"`
+
+	// Specifies the list of components of an application for which to run MintMaker.
+	// If omitted, MintMaker will run for all application's components.
+	// +optional
+	Components []Component `json:"components,omitempty"`
+}
+
+type WorkspaceSpec struct {
+	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+	//Specifies the name of the workspace for which to run Mintmaker.
+	// Required.
+	// +required
+	Workspace string `json:"workspace"`
+
+	// Specifies the list of applications in a workspace for which to run MintMaker.
+	// If omitted, MintMaker will run for all workspace's applications.
+	// +optional
+	Applications []ApplicationSpec `json:"applications,omitempty"`
+}
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -28,8 +58,10 @@ type DependencyUpdateCheckSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of DependencyUpdateCheck. Edit dependencyupdatecheck_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Specifies the list of workspaces for which to run MintMaker.
+	// If omitted, MintMaker will run for all workspaces.
+	// +optional
+	Workspaces []WorkspaceSpec `json:"workspaces,omitempty"`
 }
 
 // DependencyUpdateCheckStatus defines the observed state of DependencyUpdateCheck

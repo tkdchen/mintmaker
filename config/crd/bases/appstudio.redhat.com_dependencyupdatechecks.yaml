@@ -35,10 +35,44 @@ spec:
           spec:
             description: DependencyUpdateCheckSpec defines the desired state of DependencyUpdateCheck
             properties:
-              foo:
-                description: Foo is an example field of DependencyUpdateCheck. Edit
-                  dependencyupdatecheck_types.go to remove/update
-                type: string
+              workspaces:
+                description: Specifies the list of workspaces for which to run MintMaker.
+                  If omitted, MintMaker will run for all workspaces.
+                items:
+                  properties:
+                    applications:
+                      description: Specifies the list of applications in a workspace
+                        for which to run MintMaker. If omitted, MintMaker will run
+                        for all workspace's applications.
+                      items:
+                        properties:
+                          application:
+                            description: Specifies the name of the application for
+                              which to run Mintmaker. Required.
+                            pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                            type: string
+                          components:
+                            description: Specifies the list of components of an application
+                              for which to run MintMaker. If omitted, MintMaker will
+                              run for all application's components.
+                            items:
+                              maxLength: 63
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            type: array
+                        required:
+                        - application
+                        type: object
+                      type: array
+                    workspace:
+                      description: Specifies the name of the workspace for which to
+                        run Mintmaker. Required.
+                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                      type: string
+                  required:
+                  - workspace
+                  type: object
+                type: array
             type: object
           status:
             description: DependencyUpdateCheckStatus defines the observed state of

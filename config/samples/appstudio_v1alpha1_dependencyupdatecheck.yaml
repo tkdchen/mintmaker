@@ -7,6 +7,14 @@ metadata:
     app.kubernetes.io/part-of: mintmaker
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: mintmaker
-  name: dependencyupdatecheck-sample
+  generateName: dependencyupdatecheck-
 spec:
-  # TODO(user): Add fields here
+  workspaces:
+  - workspace: "workspace1"
+    applications:
+    - application: "application1"
+      components:
+      - "component1"
+      - "component2"
+    - application: "application2"
+  - workspace: "workspace2"
