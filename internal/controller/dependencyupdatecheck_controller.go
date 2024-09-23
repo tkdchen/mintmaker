@@ -102,6 +102,12 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 		return ctrl.Result{}, nil
 	}
 
+	if len(dependencyupdatecheck.Spec.Workspaces) > 0 {
+		log.Info(fmt.Sprintf("Following components are specified: %v", dependencyupdatecheck.Spec.Workspaces))
+		log.Info("The functionality to run Renovate only on the specified components is not yet implemented")
+		return ctrl.Result{}, nil
+	}
+
 	// Get Components
 	allComponents := &appstudiov1alpha1.ComponentList{}
 	if err := r.client.List(ctx, allComponents, &client.ListOptions{}); err != nil {
