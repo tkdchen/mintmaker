@@ -17,11 +17,14 @@ limitations under the License.
 package controller
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
 
 	appstudiov1alpha1 "github.com/konflux-ci/application-api/api/v1alpha1"
+	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -74,4 +77,51 @@ func getGitProvider(component appstudiov1alpha1.Component) (string, error) {
 	}
 
 	return gitProvider, err
+}
+
+// Get only components that match a given workspace/application/componentname
+func getFilteredComponents(workspaces []mmv1alpha1.WorkspaceSpec, apiClient client.Client, ctx context.Context) ([]appstudiov1alpha1.Component, error) {
+	components := []appstudiov1alpha1.Component{}
+	err := error(nil)
+
+	// Iterate workspaces and create query filtered by namespace ({workspace}-tenant)
+	for _, workspace := range workspaces {
+		workspaceComponentList := &appstudiov1alpha1.ComponentList{}
+		listOps := &client.ListOptions{
+			Namespace: workspace.Workspace + "-tenant",
+		}
+		if err := apiClient.List(ctx, workspaceComponentList, listOps); err != nil {
+			return nil, err
+		}
+		// No applications specified -> add all Workspace components, start processing next workspace
+		if len(workspace.Applications) == 0 {
+			components = append(components, workspaceComponentList.Items...)
+			continue
+		}
+		// Applications specified -> iterate and filter by application
+		for _, application := range workspace.Applications {
+			appMatchingComponents := []appstudiov1alpha1.Component{}
+			for _, component := range workspaceComponentList.Items {
+				if application.Application == component.Spec.Application {
+					appMatchingComponents = append(appMatchingComponents, component)
+				}
+			}
+			// No components specified for an application -> add all application components, start processing next application
+			if len(application.Components) == 0 {
+				components = append(components, appMatchingComponents...)
+				continue
+			}
+			// Components specified -> add components with matching names
+			for _, filterComponent := range application.Components {
+				for _, component := range appMatchingComponents {
+					if filterComponent == mmv1alpha1.Component(component.Spec.ComponentName) {
+						components = append(components, component)
+						break
+					}
+				}
+			}
+		}
+	}
+
+	return components, err
 }
