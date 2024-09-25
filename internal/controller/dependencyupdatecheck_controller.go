@@ -102,30 +102,35 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 		return ctrl.Result{}, nil
 	}
 
+	var gatheredComponents []appstudiov1alpha1.Component
 	if len(dependencyupdatecheck.Spec.Workspaces) > 0 {
 		log.Info(fmt.Sprintf("Following components are specified: %v", dependencyupdatecheck.Spec.Workspaces))
-		log.Info("The functionality to run Renovate only on the specified components is not yet implemented")
-		return ctrl.Result{}, nil
+		gatheredComponents, err = getFilteredComponents(dependencyupdatecheck.Spec.Workspaces, r.client, ctx)
+		if err != nil {
+			log.Error(err, "gathering filtered components has failed")
+			return ctrl.Result{}, err
+		}
+	} else {
+		allComponents := &appstudiov1alpha1.ComponentList{}
+		if err := r.client.List(ctx, allComponents, &client.ListOptions{}); err != nil {
+			log.Error(err, "failed to list Components")
+			return ctrl.Result{}, err
+		}
+		gatheredComponents = allComponents.Items
+
 	}
 
-	// Get Components
-	allComponents := &appstudiov1alpha1.ComponentList{}
-	if err := r.client.List(ctx, allComponents, &client.ListOptions{}); err != nil {
-		log.Error(err, "failed to list Components")
-		return ctrl.Result{}, err
-	}
-
-	log.Info("found components", "components", len(allComponents.Items))
+	log.Info(fmt.Sprintf("%v components will be processed", len(gatheredComponents)))
 
 	// Filter out components which have mintmaker disabled
 	componentList := []appstudiov1alpha1.Component{}
-	for _, component := range allComponents.Items {
+	for _, component := range gatheredComponents {
 		if value, exists := component.Annotations[MintMakerDisabledAnnotationName]; !exists || value != "true" {
 			componentList = append(componentList, component)
 		}
 	}
 
-	log.Info("found components with mintmaker disabled", "components", len(allComponents.Items)-len(componentList))
+	log.Info("found components with mintmaker disabled", "components", len(gatheredComponents)-len(componentList))
 	if len(componentList) == 0 {
 		return ctrl.Result{}, nil
 	}
