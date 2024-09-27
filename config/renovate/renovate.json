@@ -83,7 +83,7 @@
       "customType": "regex",
       "description": "Fedora updates from a stable source",
       "fileMatch": ["(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$", "(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$"],
-      "matchStrings": ["quay.io/fedora/fedora:(?<currentValue>.[0-9]+)"],
+      "matchStrings": ["(?<depName>[\\w\\.\\-\\/]+\\/fedora[\\w\\-]*):(?<currentValue>[0-9]+)"],
       "packageNameTemplate": "fedora",
       "datasourceTemplate": "endoflife-date"
 
@@ -96,7 +96,7 @@
     "packageRules": [
       {
         "description": "Don't update Fedora to an unstable version",
-        "matchDepNames": ["quay.io/fedora/fedora"],
+        "matchPackagePatterns": ["[\\w\\.\\-\\/]+\\/fedora[\\w\\-]*"],
         "enabled": false
       }
     ]
