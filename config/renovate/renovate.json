@@ -38,7 +38,12 @@
     "nix",
     "osgi",
     "pre-commit",
-    "vendir"
+    "vendir",
+    "terraform",
+    "terraform-version",
+    "terragrunt",
+    "terragrunt-version",
+    "tflint-plugin"
   ],
   "tekton": {
     "fileMatch": [
@@ -176,6 +181,26 @@
     "branchPrefix": "konflux/mintmaker/"
   },
   "vendir": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "terraform": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "terraform-version": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "terragrunt": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "terragrunt-version": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "tflint-plugin": {
     "additionalBranchPrefix": "{{baseBranch}}/",
     "branchPrefix": "konflux/mintmaker/"
   },
