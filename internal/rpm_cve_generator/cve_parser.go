@@ -1,9 +1,159 @@
 package rpm_cve_generator
 
 import (
+	"encoding/json"
+	"flag"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"regexp"
+	"strings"
 	"time"
 )
+
+// Create an OSV file based on Red Hat CSAF VEX file in following steps:
+// 1. Read CSAF VEX file from given URL
+// 2. For all RPM dependencies, parse CVE data to OSV format
+// 3. Store OSV data to given .nedb file
+func generateOSV(url string, filename string) error {
+	vexVulnerability, err := getVEXFromUrl(url)
+	if err != nil {
+		return fmt.Errorf("error reading CSAF VEX file: %v", err)
+	}
+
+	convertedVulnerabilities := convertToOSV(vexVulnerability)
+	if err := storeToFile(filename, convertedVulnerabilities); err != nil {
+		return fmt.Errorf("error creating OSV file: %v", err)
+	}
+
+	fmt.Printf("OSV file %s created successfully\n", filename)
+	return nil
+}
+
+// Download CSAF VEX file from given URL and store into a VEX struct
+func getVEXFromUrl(url string) (VEX, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return VEX{}, fmt.Errorf("could not fetch URL: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return VEX{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return VEX{}, fmt.Errorf("could not read response body: %v", err)
+	}
+
+	var vexData VEX
+
+	if err := json.Unmarshal([]byte(body), &vexData); err != nil {
+		return VEX{}, fmt.Errorf("could not unmarshal JSON: %v", err)
+	}
+
+	fmt.Printf("Found %d vulnerabilities at %s\n", len(vexData.Vulnerabilities), url)
+	return vexData, nil
+}
+
+// Convert VEX RPM data to OSV format
+func convertToOSV(vexData VEX) []OSV {
+	// Get list of affected packages
+	affectedList := getAffectedList(vexData)
+
+	var vulnerabilities []OSV
+	for _, vulnerability := range vexData.Vulnerabilities {
+		// Create OSV vulnerability object for each CVE
+		osvVulnerability := OSV{
+			SchemaVersion: "1.6.0",
+			Id:            vulnerability.Cve,
+			DatabaseSpecific: &DatabaseSpecific{
+				Severity: vexData.Document.AggregateSeverity.Text,
+				CWEids:   []string{vulnerability.Cwe.Id},
+			},
+			Modified:   time.Now().Format("2006-01-02T15:04:05Z"),
+			Published:  getPublishedDate(vulnerability),
+			Summary:    getSummary(vulnerability),
+			Details:    getDetails(vulnerability),
+			References: getReferencesList(vulnerability),
+			Affected:   affectedList,
+		}
+
+		vulnerabilities = append(vulnerabilities, osvVulnerability)
+	}
+	return vulnerabilities
+}
+
+// Save all CVEs to an OSV file
+func storeToFile(filename string, convertedVulnerabilities []OSV) error {
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("error accessing file: %v", err)
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+
+	for _, v := range convertedVulnerabilities {
+		if err := encoder.Encode(v); err != nil {
+			return fmt.Errorf("could not encode OSV data: %v", err)
+		}
+	}
+
+	return nil
+}
+
+// Get list of affected RPM packages from VEX data
+func getAffectedList(vex VEX) []*Affected {
+	var affectedList []*Affected
+
+	// Traverse dependencies tree
+	for _, branch := range vex.ProductTree.Branches {
+		for _, subBranch := range branch.Branches {
+			if subBranch.Category == "architecture" {
+				for _, subSubBranch := range subBranch.Branches {
+					// Collect only RPM dependencies
+					if !strings.HasPrefix(subSubBranch.Product.ProductIdentificationHelper.Purl, "pkg:rpm") {
+						continue
+					}
+
+					// Parse name and version from pURL
+					re := regexp.MustCompile(`pkg:rpm/([^@]+)@([^?]+)`)
+					matches := re.FindStringSubmatch(subSubBranch.Product.ProductIdentificationHelper.Purl)
+					purl, packageName, version := matches[0], matches[1], matches[2]
+
+					affectedPackage := Affected{
+						Package: &Package{
+							Ecosystem: "Red Hat",
+							Name:      packageName,
+							Purl:      purl,
+						},
+						Ranges: []*Range{
+							{
+								Type: "ECOSYSTEM",
+								Events: []*Event{
+									{
+										Introduced: "0.0.0",
+									},
+									{
+										Fixed: version,
+									},
+								},
+							},
+						},
+					}
+
+					// There will be duplicated dependencied from different architectures, store data once
+					if !contains(affectedList, affectedPackage) {
+						affectedList = append(affectedList, &affectedPackage)
+					}
+				}
+			}
+		}
+	}
+	return affectedList
+}
 
 func getReferencesList(vulnerability *Vulnerability) []*Reference {
 	var references []*Reference
@@ -49,4 +199,24 @@ func getPublishedDate(vulnerability *Vulnerability) string {
 		panic(err)
 	}
 	return t.Format("2006-01-02T15:04:05Z")
+}
+
+func contains(affectedList []*Affected, affectedPackage Affected) bool {
+	for _, item := range affectedList {
+		if item.Package.Name == affectedPackage.Package.Name {
+			return true
+		}
+	}
+	return false
+}
+
+// An example of this module, saves data from specified url into demo.nedb
+func main() {
+	url := flag.String("url", "", "Url pointing to CSAF VEX file")
+	filename := flag.String("file", "demo.nedb", "Name of the file to store OSV data")
+
+	flag.Parse()
+	if err := generateOSV(*url, *filename); err != nil {
+		fmt.Printf("Error generating OSV: %v\n", err)
+	}
 }
