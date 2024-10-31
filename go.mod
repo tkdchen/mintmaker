@@ -4,7 +4,8 @@ go 1.22.9
 
 require (
 	github.com/bradleyfalzon/ghinstallation/v2 v2.10.0
-	github.com/go-logr/logr v1.4.2
+	github.com/go-logr/logr v1.2.4
+	github.com/google/go-cmp v0.6.0
 	github.com/google/go-github/v45 v45.2.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/konflux-ci/application-api v0.0.0-20240527211352-be061932d497
@@ -48,7 +49,6 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/cel-go v0.20.1 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-github/v60 v60.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
