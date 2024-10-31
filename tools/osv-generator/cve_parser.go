@@ -1,8 +1,7 @@
-package rpm_cve_generator
+package osv_generator
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,14 +15,14 @@ import (
 // 1. Read CSAF VEX file from given URL
 // 2. For all RPM dependencies, parse CVE data to OSV format
 // 3. Store OSV data to given .nedb file
-func generateOSV(url string, filename string) error {
-	vexVulnerability, err := getVEXFromUrl(url)
+func GenerateOSV(url string, filename string) error {
+	vexVulnerability, err := GetVEXFromUrl(url)
 	if err != nil {
 		return fmt.Errorf("error reading CSAF VEX file: %v", err)
 	}
 
-	convertedVulnerabilities := convertToOSV(vexVulnerability)
-	if err := storeToFile(filename, convertedVulnerabilities); err != nil {
+	convertedVulnerabilities := ConvertToOSV(vexVulnerability)
+	if err := StoreToFile(filename, convertedVulnerabilities); err != nil {
 		return fmt.Errorf("error creating OSV file: %v", err)
 	}
 
@@ -32,7 +31,7 @@ func generateOSV(url string, filename string) error {
 }
 
 // Download CSAF VEX file from given URL and store into a VEX struct
-func getVEXFromUrl(url string) (VEX, error) {
+func GetVEXFromUrl(url string) (VEX, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return VEX{}, fmt.Errorf("could not fetch URL: %v", err)
@@ -59,7 +58,7 @@ func getVEXFromUrl(url string) (VEX, error) {
 }
 
 // Convert VEX RPM data to OSV format
-func convertToOSV(vexData VEX) []OSV {
+func ConvertToOSV(vexData VEX) []OSV {
 	// Get list of affected packages
 	affectedList := getAffectedList(vexData)
 
@@ -87,7 +86,7 @@ func convertToOSV(vexData VEX) []OSV {
 }
 
 // Save all CVEs to an OSV file
-func storeToFile(filename string, convertedVulnerabilities []OSV) error {
+func StoreToFile(filename string, convertedVulnerabilities []OSV) error {
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("error accessing file: %v", err)
@@ -208,15 +207,4 @@ func contains(affectedList []*Affected, affectedPackage Affected) bool {
 		}
 	}
 	return false
-}
-
-// An example of this module, saves data from specified url into demo.nedb
-func main() {
-	url := flag.String("url", "", "Url pointing to CSAF VEX file")
-	filename := flag.String("file", "demo.nedb", "Name of the file to store OSV data")
-
-	flag.Parse()
-	if err := generateOSV(*url, *filename); err != nil {
-		fmt.Printf("Error generating OSV: %v\n", err)
-	}
 }

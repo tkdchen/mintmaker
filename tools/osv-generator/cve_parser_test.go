@@ -1,4 +1,4 @@
-package rpm_cve_generator
+package osv_generator
 
 import (
 	"encoding/json"
@@ -191,7 +191,7 @@ func TestConvertToOSV(t *testing.T) {
 		},
 	}
 
-	osv := convertToOSV(vexSampleObject)
+	osv := ConvertToOSV(vexSampleObject)
 	if cmp.Equal(osv, result) {
 		t.Fatalf("expected %+v, got %+v", result, osv)
 	}
