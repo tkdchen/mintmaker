@@ -46,7 +46,16 @@
     "terraform-version",
     "terragrunt",
     "terragrunt-version",
-    "tflint-plugin"
+    "tflint-plugin",
+    "pep621",
+    "pip-compile",
+    "pip_requirements",
+    "pip_setup",
+    "pipenv",
+    "poetry",
+    "pyenv",
+    "runtime-version",
+    "setup-cfg"
   ],
   "tekton": {
     "fileMatch": [
@@ -204,6 +213,42 @@
     "branchPrefix": "konflux/mintmaker/"
   },
   "tflint-plugin": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pep621": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pip-compile": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pip_requirements": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pip_setup": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pipenv": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "poetry": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "pyenv": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "runtime-version": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "setup-cfg": {
     "additionalBranchPrefix": "{{baseBranch}}/",
     "branchPrefix": "konflux/mintmaker/"
   },
