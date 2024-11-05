@@ -68,13 +68,13 @@ func GenerateOSV(filename string) error {
 	}
 
 	// Extract vulnerability data and convert to OSV format
+	advisoryChan := make(chan []OSV)
 	for _, advisory := range advisories {
-		advisoryChan := make(chan []OSV)
-
 		go func(advisory string) {
 			advisoryChan <- extractAdvisory(advisory)
 		}(advisory)
-
+	}
+	for range advisories {
 		osvList = append(osvList, <-advisoryChan...)
 	}
 
