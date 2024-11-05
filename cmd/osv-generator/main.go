@@ -2,20 +2,14 @@ package main
 
 import (
 	"flag"
-	"log"
 
 	osv_generator "github.com/konflux-ci/mintmaker/tools/osv-generator"
 )
 
-// A demo which parses RPM CVE data into OSV database format based on input CSAF VEX url
-// TODO: implement the ability to process all updated advisories
+// A demo which parses RPM CVE data created in the last 24 hours into OSV database format
 func main() {
-	url := flag.String("url", "", "Url pointing to CSAF VEX file")
-	filename := flag.String("file", "demo.nedb", "Name of the file to store OSV data")
-
+	filename := flag.String("filename", "redhat.nedb", "Output filename for OSV database")
 	flag.Parse()
 
-	if err := osv_generator.GenerateOSV(*url, *filename); err != nil {
-		log.Fatalf("Error generating OSV: %v\n", err)
-	}
+	osv_generator.GenerateOSV(*filename)
 }
