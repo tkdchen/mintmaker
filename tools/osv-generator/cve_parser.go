@@ -11,25 +11,6 @@ import (
 	"time"
 )
 
-// Create an OSV file based on Red Hat CSAF VEX file in following steps:
-// 1. Read CSAF VEX file from given URL
-// 2. For all RPM dependencies, parse CVE data to OSV format
-// 3. Store OSV data to given .nedb file
-func GenerateOSV(url string, filename string) error {
-	vexVulnerability, err := GetVEXFromUrl(url)
-	if err != nil {
-		return fmt.Errorf("error reading CSAF VEX file: %v", err)
-	}
-
-	convertedVulnerabilities := ConvertToOSV(vexVulnerability)
-	if err := StoreToFile(filename, convertedVulnerabilities); err != nil {
-		return fmt.Errorf("error creating OSV file: %v", err)
-	}
-
-	fmt.Printf("OSV file %s created successfully\n", filename)
-	return nil
-}
-
 // Download CSAF VEX file from given URL and store into a VEX struct
 func GetVEXFromUrl(url string) (VEX, error) {
 	resp, err := http.Get(url)
@@ -118,7 +99,7 @@ func getAffectedList(vex VEX) []*Affected {
 					}
 
 					// Parse name and version from pURL
-					re := regexp.MustCompile(`pkg:rpm/([^@]+)@([^?]+)`)
+					re := regexp.MustCompile(`pkg:rpm(?:mod)?/([^@]+)@([^?]+)`)
 					matches := re.FindStringSubmatch(subSubBranch.Product.ProductIdentificationHelper.Purl)
 					purl, packageName, version := matches[0], matches[1], matches[2]
 
