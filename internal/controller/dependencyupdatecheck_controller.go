@@ -42,10 +42,10 @@ import (
 
 // DependencyUpdateCheckReconciler reconciles a DependencyUpdateCheck object
 type DependencyUpdateCheckReconciler struct {
-	client         client.Client
-	taskProviders  []renovate.TaskProvider
-	eventRecorder  record.EventRecorder
-	jobCoordinator *renovate.JobCoordinator
+	client                 client.Client
+	taskProviders          []renovate.TaskProvider
+	eventRecorder          record.EventRecorder
+	pipelinerunCoordinator *renovate.pipelinerunCoordinator
 }
 
 func NewDependencyUpdateCheckReconciler(client client.Client, scheme *runtime.Scheme, eventRecorder record.EventRecorder) *DependencyUpdateCheckReconciler {
@@ -55,8 +55,8 @@ func NewDependencyUpdateCheckReconciler(client client.Client, scheme *runtime.Sc
 			renovate.NewGithubAppRenovaterTaskProvider(k8s.NewGithubAppConfigReader(client, scheme, eventRecorder)),
 			renovate.NewBasicAuthTaskProvider(k8s.NewGitCredentialProvider(client)),
 		},
-		eventRecorder:  eventRecorder,
-		jobCoordinator: renovate.NewJobCoordinator(client, scheme),
+		eventRecorder:          eventRecorder,
+		pipelinerunCoordinator: renovate.NewCoordinator(client, scheme),
 	}
 }
 
@@ -165,9 +165,9 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	log.Info("executing renovate tasks", "tasks", len(tasks))
-	err = r.jobCoordinator.ExecuteWithLimits(ctx, tasks)
+	err = r.pipelinerunCoordinator.Execute(ctx, tasks)
 	if err != nil {
-		log.Error(err, "failed to create a job")
+		log.Error(err, "failed to create a pipelinerun")
 	}
 
 	return ctrl.Result{}, nil
