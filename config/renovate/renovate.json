@@ -93,12 +93,18 @@
         "recreateWhen": "always",
         "rebaseWhen": "behind-base-branch"
       }
+    ],
+    "schedule": [
+      "after 5am on saturday"
     ]
   },
   "dockerfile": {
     "enabled": true,
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on monday"
+    ]
   },
   "rpm": {
     "enabled": true,
@@ -111,7 +117,10 @@
       }
     ],
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "before 5am"
+    ]
   },
   "lockFileMaintenance": {
     "enabled": true,
@@ -119,153 +128,259 @@
     "rebaseWhen": "behind-base-branch",
     "branchTopic": "lock-file-maintenance",
     "schedule": [
-      "at any time"
+      "before 5am"
     ]
   },
   "git-submodules": {
     "enabled": true,
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on tuesday"
+    ]
   },
   "argocd": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "crossplane": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "fleet": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "flux": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "helm-requirements": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "helm-values": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "helmfile": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "helmsman": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "helmv3": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "jsonnet-bundler": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "kubernetes": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "kustomize": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on wednesday"
+    ]
   },
   "asdf": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "fvm": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "hermit": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "homebrew": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "nix": {
     "enabled": true,
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "osgi": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "pre-commit": {
     "enabled": true,
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "vendir": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on thursday"
+    ]
   },
   "terraform": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on friday"
+    ]
   },
   "terraform-version": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on friday"
+    ]
   },
   "terragrunt": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on friday"
+    ]
   },
   "terragrunt-version": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on friday"
+    ]
   },
   "tflint-plugin": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on friday"
+    ]
   },
   "pep621": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "pip-compile": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "pip_requirements": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "pip_setup": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "pipenv": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "poetry": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "pyenv": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "runtime-version": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "setup-cfg": {
     "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/"
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
   },
   "forkProcessing": "enabled",
   "allowedPostUpgradeCommands": ["^rpm-lockfile-prototype rpms.in.yaml$"],
+  "updateNotScheduled": false,
   "dependencyDashboard": false
 }
