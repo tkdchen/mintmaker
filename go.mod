@@ -9,7 +9,6 @@ require (
 	github.com/go-logr/logr v1.4.2
 	github.com/google/go-github/v45 v45.2.0
 	github.com/konflux-ci/application-api v0.0.0-20240527211352-be061932d497
-	github.com/konflux-ci/release-service v0.0.0-20241121004859-00b1c200d82c
 	github.com/onsi/ginkgo/v2 v2.17.3
 	github.com/onsi/gomega v1.33.0
 	github.com/stretchr/testify v1.9.0
@@ -33,7 +32,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.2 // indirect
-	github.com/enterprise-contract/enterprise-contract-controller/api v0.1.50 // indirect
+	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -63,12 +62,10 @@ require (
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/konflux-ci/operator-toolkit v0.0.0-20240402130556-ef6dcbeca69d // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/operator-framework/operator-lib v0.13.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.19.0 // indirect
@@ -76,7 +73,6 @@ require (
 	github.com/prometheus/common v0.52.3 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/prometheus/statsd_exporter v0.23.0 // indirect
-	github.com/redhat-appstudio/application-api v0.0.0-20240106104232-18f545e48a03 // indirect
 	github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace // indirect
 	github.com/stoewer/go-strcase v1.2.0 // indirect
 	go.opencensus.io v0.24.0 // indirect

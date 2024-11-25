@@ -73,8 +73,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emicklei/go-restful/v3 v3.11.2 h1:1onLa9DcsMYO9P+CXaL0dStDqQ2EHHXLiz+BtnqkLAU=
 github.com/emicklei/go-restful/v3 v3.11.2/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
-github.com/enterprise-contract/enterprise-contract-controller/api v0.1.50 h1:o9THYT2RjAxh2AaoqbSbct0u75bMuH0WIL6ZmNvTwUc=
-github.com/enterprise-contract/enterprise-contract-controller/api v0.1.50/go.mod h1:8hj9T31RfHUY3Wyn2KXfQy69hvi1nmwsw+P6xdOUIiI=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
@@ -237,10 +235,6 @@ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konflux-ci/application-api v0.0.0-20240527211352-be061932d497 h1:Xv063qqQY8tPNYvx4+hTtWw4DPDAVa4A1SJibvPBsS4=
 github.com/konflux-ci/application-api v0.0.0-20240527211352-be061932d497/go.mod h1:948Z+a1IbfRT0RtoHzWWSN9YEucSbMJTHaMhz7dVICc=
-github.com/konflux-ci/operator-toolkit v0.0.0-20240402130556-ef6dcbeca69d h1:z7j3mglNoXvIrw5Vz/Ul+izoITRaqYURPIWrFoEyHgI=
-github.com/konflux-ci/operator-toolkit v0.0.0-20240402130556-ef6dcbeca69d/go.mod h1:AcChx7FjpYSIkDvQgaUKyauuF0PXm3ivB5MqZSC9Eis=
-github.com/konflux-ci/release-service v0.0.0-20241121004859-00b1c200d82c h1:OJBzQL+cB9RFvzgGAAByIbMYz0JX/H4lmQHeOYPpgUQ=
-github.com/konflux-ci/release-service v0.0.0-20241121004859-00b1c200d82c/go.mod h1:KLuLvi1boDfnFsQL0cXytBLc+TWsRo80YQFTygElRvI=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.3/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
@@ -273,8 +267,6 @@ github.com/onsi/ginkgo/v2 v2.17.3 h1:oJcvKpIb7/8uLpDDtnQuf18xVnwKp8DTD7DQ6gTd/MU
 github.com/onsi/ginkgo/v2 v2.17.3/go.mod h1:nP2DPOQoNsQmsVyv5rDA8JkXQoCs6goXIvr/PRJ1eCc=
 github.com/onsi/gomega v1.33.0 h1:snPCflnZrpMsy94p4lXVEkHo12lmPnc3vY5XBbreexE=
 github.com/onsi/gomega v1.33.0/go.mod h1:+925n5YtiFsLzzafLUHzVMBpvvRAzrydIBiSIxjX3wY=
-github.com/operator-framework/operator-lib v0.13.0 h1:+TWgJhbJqyNix9m1LmHK5gY/lb3CGqZX3Wvl7K0k+6I=
-github.com/operator-framework/operator-lib v0.13.0/go.mod h1:RDs1wGdOKWSMCO+BYSbqmmKGnD5jOP7TVP+KvoX8jMg=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -315,8 +307,6 @@ github.com/prometheus/procfs v0.12.0/go.mod h1:pcuDEFsWDnvcgNzo4EEweacyhjeA9Zk3c
 github.com/prometheus/statsd_exporter v0.22.7/go.mod h1:N/TevpjkIh9ccs6nuzY3jQn9dFqnUakOjnEuMPJJJnI=
 github.com/prometheus/statsd_exporter v0.23.0 h1:GEkriUCmARYh1gSA0gzpvmTg/oHMc5MfDFNlS/che4E=
 github.com/prometheus/statsd_exporter v0.23.0/go.mod h1:1itCY9XMa2p5pjO5HseGjs5cnaIA5qxLCYmn3OUna58=
-github.com/redhat-appstudio/application-api v0.0.0-20240106104232-18f545e48a03 h1:UUgrEyvQJhEnvghkEaY9YlxeAk+D4cop+Bd3+8jh0eQ=
-github.com/redhat-appstudio/application-api v0.0.0-20240106104232-18f545e48a03/go.mod h1:YvckuKHe82eWloGk0/BpSw4YYG2owrGZAanztbOj3pQ=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=
