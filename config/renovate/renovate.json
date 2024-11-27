@@ -47,6 +47,7 @@
     "terragrunt-version",
     "tflint-plugin",
     "pep621",
+    "pep723",
     "pip-compile",
     "pip_requirements",
     "pip_setup",
@@ -308,6 +309,13 @@
     ]
   },
   "pep621": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/",
+    "schedule": [
+      "after 5am on saturday"
+    ]
+  },
+  "pep723": {
     "additionalBranchPrefix": "{{baseBranch}}/",
     "branchPrefix": "konflux/mintmaker/",
     "schedule": [
