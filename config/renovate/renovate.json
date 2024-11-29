@@ -57,7 +57,9 @@
     "poetry",
     "pyenv",
     "runtime-version",
-    "setup-cfg"
+    "setup-cfg",
+    "gomod",
+    "ocb"
   ],
   "tekton": {
     "additionalBranchPrefix": "",
@@ -308,6 +310,14 @@
     "schedule": [
       "after 5am on saturday"
     ]
+  },
+  "gomod": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
+  },
+  "ocb": {
+    "additionalBranchPrefix": "{{baseBranch}}/",
+    "branchPrefix": "konflux/mintmaker/"
   },
   "forkProcessing": "enabled",
   "allowedPostUpgradeCommands": [
