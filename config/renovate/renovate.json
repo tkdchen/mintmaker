@@ -97,6 +97,15 @@
         "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{configDescription}}}{{{controls}}}{{{footer}}}",
         "recreateWhen": "always",
         "rebaseWhen": "behind-base-branch"
+      },
+      {
+        "matchManagers": [
+          "gomod"
+        ],
+        "matchDepTypes": [
+          "indirect"
+        ],
+        "enabled": true
       }
     ],
     "schedule": [
@@ -316,6 +325,10 @@
     "branchPrefix": "konflux/mintmaker/",
     "schedule": [
       "after 5am on sunday"
+    ],
+    "postUpdateOptions": [
+      "gomodUpdateImportPaths",
+      "gomodTidy"
     ]
   },
   "ocb": {
