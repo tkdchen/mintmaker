@@ -321,8 +321,6 @@
     ]
   },
   "gomod": {
-    "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/",
     "schedule": [
       "after 5am on sunday"
     ],
@@ -332,8 +330,6 @@
     ]
   },
   "ocb": {
-    "additionalBranchPrefix": "{{baseBranch}}/",
-    "branchPrefix": "konflux/mintmaker/",
     "schedule": [
       "after 5am on sunday"
     ]
