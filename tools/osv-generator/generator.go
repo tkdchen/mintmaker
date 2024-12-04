@@ -4,14 +4,17 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/http"
+	"sort"
+	"strings"
 	"time"
 )
 
 const URL = "https://security.access.redhat.com/data/csaf/v2/advisories"
 
-// Get list of new advisories from the last `days`
-func getAdvisoryList(days int) ([]string, error) {
-	response, err := http.Get(fmt.Sprintf("%s/%s", URL, "changes.csv"))
+// Get list of new advisories published in the last `days`
+// TODO: Do not use until published.csv is periodically generated
+func getAdvisoryListByPublished(days int) ([]string, error) {
+	response, err := http.Get(fmt.Sprintf("%s/%s", URL, "published.csv"))
 	if err != nil {
 		fmt.Println("Error downloading file:", err)
 		return nil, err
@@ -40,13 +43,48 @@ func getAdvisoryList(days int) ([]string, error) {
 		advisories = append(advisories, record[0])
 
 		if advisoryDate.Before(dateThreshold) {
+			// All recently modified advisories were found
 			fmt.Printf("Found %d new advisories\n", len(advisories))
 			break
 		}
 	}
 
 	return advisories, nil
+}
 
+// Get list of new advisories sorted by name, returns maximum of `limit` advisories
+func getAdvisoryListByModified(limit int) ([]string, error) {
+	response, err := http.Get(fmt.Sprintf("%s/%s", URL, "changes.csv"))
+	if err != nil {
+		fmt.Println("Error downloading file:", err)
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	// Load all advisories from the document
+	csvReader := csv.NewReader(response.Body)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		fmt.Println("Error parsing CSV:", err)
+		return nil, err
+	}
+
+	// Sort records by name in descending order to get newest advisories first
+	sort.Slice(records, func(i, j int) bool {
+		return records[i][0] > records[j][0]
+	})
+
+	var advisories []string
+	for _, record := range records {
+		// Add only RHSA advisories for now
+		if strings.Contains(record[0], "rhsa-") {
+			advisories = append(advisories, record[0])
+			if len(advisories) == limit {
+				break
+			}
+		}
+	}
+	return advisories, nil
 }
 
 // Extract advisory data from the given URL, store as list of OSV objects
@@ -62,7 +100,7 @@ func extractAdvisory(advisory string) []OSV {
 // Generate OSV vulnerabilities from CSAF VEX data and store to a file
 func GenerateOSV(filename string) error {
 	var osvList []OSV
-	advisories, err := getAdvisoryList(1) // Advisories created in the last 24 hours
+	advisories, err := getAdvisoryListByModified(200)
 	if err != nil {
 		return err
 	}
