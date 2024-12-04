@@ -68,7 +68,7 @@ func ConvertToOSV(vexData VEX) []OSV {
 
 // Save all CVEs to an OSV file
 func StoreToFile(filename string, convertedVulnerabilities []OSV) error {
-	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return fmt.Errorf("error accessing file: %v", err)
 	}
@@ -175,7 +175,7 @@ func getSummary(vulnerability *Vulnerability) string {
 func getPublishedDate(vulnerability *Vulnerability) string {
 	t, err := time.Parse("2006-01-02T15:04:05+00:00", vulnerability.DiscoveryDate)
 	if err != nil {
-		fmt.Printf("Error parsing time: %v\n", err)
+		fmt.Printf("Error parsing time for %s: %v\n", vulnerability.Cve, err)
 		panic(err)
 	}
 	return t.Format("2006-01-02T15:04:05Z")
