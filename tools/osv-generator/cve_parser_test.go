@@ -147,52 +147,21 @@ func TestContains(t *testing.T) {
 
 func TestConvertToOSV(t *testing.T) {
 	result := OSV{
-		SchemaVersion: "1.6.0",
-		Id:            "CVE-2022-1234",
+		Id: "CVE-2022-1234",
 		DatabaseSpecific: &DatabaseSpecific{
 			Severity: "High",
 			CWEids:   []string{"CWE-79"},
 		},
-		Modified:  "Now",
-		Published: "2022-01-01T00:00:00Z",
-		Summary:   "Test summary",
-		Details:   "Test description",
-		References: []*Reference{
-			{
-				Type: "REPORT",
-				Url:  "http://example.com",
-			},
-			{
-				Type: "WEB",
-				Url:  "http://example2.com",
-			},
-		},
-		Affected: []*Affected{
-			{
-				Package: &Package{
-					Ecosystem: "Red Hat",
-					Name:      "testpackage",
-					Purl:      "pkg:rpm/testpackage@1.0.1",
-				},
-				Ranges: []*Range{
-					{
-						Type: "ECOSYSTEM",
-						Events: []*Event{
-							{
-								Introduced: "0.0.0",
-							},
-							{
-								Fixed: "1.0.1",
-							},
-						},
-					},
-				},
-			},
-		},
 	}
 
 	osv := ConvertToOSV(vexSampleObject)
-	if cmp.Equal(osv, result) {
-		t.Fatalf("expected %+v, got %+v", result, osv)
+	if len(osv) != 1 {
+		t.Fatalf("expected 1 OSV, got %d", len(osv))
+	}
+	if !cmp.Equal(osv[0].DatabaseSpecific, result.DatabaseSpecific) {
+		t.Fatalf("expected %+v, got %+v", result.DatabaseSpecific, osv[0].DatabaseSpecific)
+	}
+	if !cmp.Equal(osv[0].Id, result.Id) {
+		t.Fatalf("expected %+v, got %+v", result.Id, osv[0].Id)
 	}
 }
