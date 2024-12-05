@@ -72,6 +72,14 @@ make uninstall
 make undeploy
 ```
 
+## Testing
+
+To run the tests, run:
+
+```sh
+make test
+```
+
 ## Contributing
 To contribute to MintMaker you need to be part of the [MintMaker Maintainers](https://github.com/orgs/konflux-ci/teams/mintmaker-maintainers) team.
 
