@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
 
 	. "github.com/konflux-ci/mintmaker/pkg/common"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
@@ -35,8 +36,8 @@ const (
 	MaxSimultaneousPipelineRuns = 2 //FIXME revert to 20
 )
 
+// Collect pipelineruns with state 'running' or 'started'
 func countRunningPipelineRuns(existingPipelineRuns tektonv1beta1.PipelineRunList) (int, error) {
-	// Collect pipelineruns with state 'running' or 'started'
 	var runningPipelineRuns []*tektonv1beta1.PipelineRun
 	for i, pipelineRun := range existingPipelineRuns.Items {
 		if len(pipelineRun.Status.Conditions) > 0 &&
@@ -57,15 +58,6 @@ type PipelineRunReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the PipelineRun object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
 func (r *PipelineRunReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrllog.FromContext(ctx).WithName("PipelineRun")
 	ctx = ctrllog.IntoContext(ctx, log)
@@ -82,23 +74,13 @@ func (r *PipelineRunReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
-	// Collect pipelineruns with state 'running' or 'started'
-	// var runningPipelineRuns []*tektonv1beta1.PipelineRun
-	// for i, pipelineRun := range childPipelineRuns.Items {
-	// 	if len(pipelineRun.Status.Conditions) > 0 &&
-	// 		pipelineRun.Status.Conditions[0].Status == corev1.ConditionUnknown &&
-	// 		(pipelineRun.Status.Conditions[0].Reason == tektonv1beta1.PipelineRunReasonRunning.String() ||
-	// 			pipelineRun.Status.Conditions[0].Reason == tektonv1beta1.PipelineRunReasonStarted.String()) {
-	// 		runningPipelineRuns = append(runningPipelineRuns, &childPipelineRuns.Items[i])
-	// 	}
-	// }
-	// numRunning := len(runningPipelineRuns)
 	numRunning, err := countRunningPipelineRuns(existingPipelineRuns)
 	if err != nil {
 		log.Error(err, "Unable to count running pipelineruns")
 		return ctrl.Result{}, err
 	}
 
+	// Launch up to N pipelineruns
 	numToLaunch := MaxSimultaneousPipelineRuns - numRunning
 	if numToLaunch > 0 {
 		numLaunched := 0
@@ -118,27 +100,9 @@ func (r *PipelineRunReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			}
 		}
 	}
-
-	// Launch one pipelinerun at a time while less than the maximum number is currently running
-	// FIXME use fixed-number launch instead of this lanch-repeat logic
-	// for numRunning < MaxSimultaneousPipelineRuns { //FIXME this condition is never satisfied, for is a problem here
-	// 	for _, pipelineRun := range existingPipelineRuns.Items {
-	// 		if pipelineRun.IsPending() {
-	// 			pipelineRun.Spec.Status = ""
-	// 			err = r.Client.Update(ctx, &pipelineRun, &client.UpdateOptions{})
-	// 			if err != nil {
-	// 				log.Error(err, "Unable to update pipelinerun status")
-	// 				return ctrl.Result{}, err
-	// 			}
-	// 			log.Info(fmt.Sprintf("\n\nPipelineRun is updated (pending state removed): %v", req.NamespacedName))
-	// 			numRunning, err = countRunningPipelineRuns(existingPipelineRuns)
-	// 			if err != nil {
-	// 				log.Error(err, "Unable to count running pipelineruns")
-	// 				return ctrl.Result{}, err
-	// 			}
-	// 		}
-	// 	}
-	// }
+	// without this pause, the controller might launch more pipelines than the max number,
+	// probably because it takes a moment until current states are synchronized
+	time.Sleep(100 * time.Millisecond)
 
 	return ctrl.Result{}, nil
 }
