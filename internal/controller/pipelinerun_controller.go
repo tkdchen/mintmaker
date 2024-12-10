@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	MaxSimultaneousPipelineRuns = 20
+	MaxSimultaneousPipelineRuns = 2 //FIXME revert to 20
 )
 
 func countRunningPipelineRuns(existingPipelineRuns tektonv1beta1.PipelineRunList) (int, error) {
@@ -99,8 +99,9 @@ func (r *PipelineRunReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
-	// Launch one pipelinerun if less than the maximum number is currently running
-	for numRunning < MaxSimultaneousPipelineRuns {
+	numToLaunch := MaxSimultaneousPipelineRuns - numRunning
+	if numToLaunch > 0 {
+		numLaunched := 0
 		for _, pipelineRun := range existingPipelineRuns.Items {
 			if pipelineRun.IsPending() {
 				pipelineRun.Spec.Status = ""
@@ -109,15 +110,35 @@ func (r *PipelineRunReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 					log.Error(err, "Unable to update pipelinerun status")
 					return ctrl.Result{}, err
 				}
-				log.Info(fmt.Sprintf("\n\nPipelineRun is updated (pending state removed): %v", req.NamespacedName))
+				log.Info(fmt.Sprintf("PipelineRun is updated (pending state removed): %v", req.NamespacedName))
+				numLaunched += 1
+				if numLaunched == numToLaunch {
+					break
+				}
 			}
 		}
-		numRunning, err = countRunningPipelineRuns(existingPipelineRuns)
-		if err != nil {
-			log.Error(err, "Unable to count running pipelineruns")
-			return ctrl.Result{}, err
-		}
 	}
+
+	// Launch one pipelinerun at a time while less than the maximum number is currently running
+	// FIXME use fixed-number launch instead of this lanch-repeat logic
+	// for numRunning < MaxSimultaneousPipelineRuns { //FIXME this condition is never satisfied, for is a problem here
+	// 	for _, pipelineRun := range existingPipelineRuns.Items {
+	// 		if pipelineRun.IsPending() {
+	// 			pipelineRun.Spec.Status = ""
+	// 			err = r.Client.Update(ctx, &pipelineRun, &client.UpdateOptions{})
+	// 			if err != nil {
+	// 				log.Error(err, "Unable to update pipelinerun status")
+	// 				return ctrl.Result{}, err
+	// 			}
+	// 			log.Info(fmt.Sprintf("\n\nPipelineRun is updated (pending state removed): %v", req.NamespacedName))
+	// 			numRunning, err = countRunningPipelineRuns(existingPipelineRuns)
+	// 			if err != nil {
+	// 				log.Error(err, "Unable to count running pipelineruns")
+	// 				return ctrl.Result{}, err
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return ctrl.Result{}, nil
 }
@@ -127,7 +148,7 @@ func (r *PipelineRunReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&tektonv1beta1.PipelineRun{}).
 		WithEventFilter(predicate.Funcs{
-			CreateFunc:  func(createEvent event.CreateEvent) bool { return false },
+			CreateFunc:  func(createEvent event.CreateEvent) bool { return true },
 			DeleteFunc:  func(deleteEvent event.DeleteEvent) bool { return false },
 			UpdateFunc:  func(updateEvent event.UpdateEvent) bool { return true },
 			GenericFunc: func(genericEvent event.GenericEvent) bool { return false },
