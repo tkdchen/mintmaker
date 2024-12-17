@@ -87,6 +87,10 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 	ctx = ctrllog.IntoContext(ctx, log)
 	name := fmt.Sprintf("renovate-%d-%s-%s", comp.GetTimestamp(), RandomString(8), comp.GetName())
 
+	renovateConfig, err := comp.GetRenovateConfig()
+	if err != nil {
+		return nil, err
+	}
 	// Create ConfigMap for Renovate global configuration
 	renovateConfigMap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -95,7 +99,7 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 		},
 		// TODO: replace renovate.json with Comp.GetRenovateConfig() (to be implemented)
 		Data: map[string]string{
-			"renovate.json": `{"$schema": "https://docs.renovatebot.com/renovate-schema.json"}`,
+			"renovate.json": renovateConfig,
 		},
 	}
 

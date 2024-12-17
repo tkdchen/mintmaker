@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	ghinstallation "github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/google/go-github/v45/github"
@@ -251,6 +252,25 @@ func (c *Component) getAppInstallations() ([]AppInstallation, error) {
 	return appInstallations, nil
 }
 
+func (c *Component) getAppSlug() (string, error) {
+	appID, appPrivateKey, err := getAppIDAndKey(c.client, c.ctx)
+	if err != nil {
+		return "", err
+	}
+	itr, err := ghinstallation.NewAppsTransport(http.DefaultTransport, appID, appPrivateKey)
+	if err != nil {
+		return "", err
+	}
+
+	client := github.NewClient(&http.Client{Transport: itr})
+	app, _, err := client.Apps.Get(context.Background(), "")
+	if err != nil {
+		return "", fmt.Errorf("failed to load GitHub app metadata, %w", err)
+	}
+	slug := app.GetSlug()
+	return slug, nil
+}
+
 func (c *Component) getDefaultBranch() (string, error) {
 	// TODO: call github APIs to determine the default branch
 	return "main", nil
@@ -258,4 +278,32 @@ func (c *Component) getDefaultBranch() (string, error) {
 
 func (c *Component) GetAPIEndpoint() string {
 	return fmt.Sprintf("https://api.%s/", c.Host)
+}
+
+func (c *Component) GetRenovateConfig() (string, error) {
+	baseConfig, err := c.GetRenovateBaseConfig(c.client, c.ctx)
+	if err != nil {
+		return "", err
+	}
+	// TODO: platform, endpoint, username
+	appSlug, err := c.getAppSlug()
+	if err != nil {
+		return "", err
+	}
+	baseConfig["gitAuthor"] = fmt.Sprintf("%s <126015336+%s[bot]@users.noreply.github.com>", appSlug, appSlug)
+
+	branch, err := c.GetBranch()
+	if err != nil {
+		return "", err
+	}
+	repo := map[string]interface{}{
+		"baseBranches": []string{branch},
+		"repository":   c.Repository,
+	}
+	baseConfig["repositories"] = []interface{}{repo}
+	updatedConfig, err := json.MarshalIndent(baseConfig, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return string(updatedConfig), nil
 }

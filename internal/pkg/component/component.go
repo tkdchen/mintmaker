@@ -22,6 +22,7 @@ type GitComponent interface {
 	GetToken() (string, error)
 	GetBranch() (string, error)
 	GetAPIEndpoint() string
+	GetRenovateConfig() (string, error)
 }
 
 func NewGitComponent(comp *appstudiov1alpha1.Component, timestamp int64, client client.Client, ctx context.Context) (GitComponent, error) {

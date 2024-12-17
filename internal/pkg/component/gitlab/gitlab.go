@@ -2,6 +2,7 @@ package gitlab
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	appstudiov1alpha1 "github.com/konflux-ci/application-api/api/v1alpha1"
 	"github.com/konflux-ci/mintmaker/internal/pkg/component/base"
@@ -164,4 +165,27 @@ func (c *Component) GetAPIEndpoint() string {
 func (c *Component) getDefaultBranch() (string, error) {
 	// TODO: call github APIs to determine the default branch
 	return "main", nil
+}
+
+func (c *Component) GetRenovateConfig() (string, error) {
+	baseConfig, err := c.GetRenovateBaseConfig(c.client, c.ctx)
+	if err != nil {
+		return "", err
+	}
+	// TODO: platform, endpoint, username
+	branch, err := c.GetBranch()
+	if err != nil {
+		return "", err
+	}
+	repo := map[string]interface{}{
+		"baseBranches": []string{branch},
+		"repository":   c.Repository,
+	}
+	baseConfig["repositories"] = []interface{}{repo}
+	updatedConfig, err := json.MarshalIndent(baseConfig, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return string(updatedConfig), nil
+
 }
