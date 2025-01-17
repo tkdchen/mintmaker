@@ -39,7 +39,7 @@ spec:
         # not support updating env variables directly, unless we write a new transformer
         # plugin. By storing the image reference here, we can dynamically update it with
         # Kustomize, and the container can access it using 'env[].valueFrom.fieldRef.fieldPath'.
-        mintmaker.appstudio.redhat.com/renovate-image: quay.io/mytestworkload/mintmaker-renovate-image:f6006e761902d8c537c2dc9c73ce71b3ea6140fd-2025-01-16T10_00_47-08_00
+        mintmaker.appstudio.redhat.com/renovate-image: quay.io/mytestworkload/mintmaker-renovate-image:d399842bf335ebaa7dd30d6143b89e55c4110a84-2025-01-17T17_23_47-08_00
       labels:
         control-plane: controller-manager
     spec:
