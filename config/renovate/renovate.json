@@ -101,7 +101,7 @@
     ],
     "postUpgradeTasks": {
       "commands": [
-        "pipeline-migration-tool --renovate-upgrades '{{{ toJSON upgrades }}}' --cache-dir /tmp/pmt-cache"
+        "PMT_LOCAL_TEST=1 pipeline-migration-tool --renovate-upgrades '{{{ toJSON upgrades }}}' --cache-dir /tmp/pmt-cache"
       ],
       "executionMode": "branch"
     }
@@ -317,7 +317,7 @@
   "forkProcessing": "enabled",
   "allowedPostUpgradeCommands": [
     "^rpm-lockfile-prototype rpms.in.yaml$",
-    "^pipeline-migration-tool --renovate-upgrades '{{{ toJSON upgrades }}}' --cache-dir /tmp/pmt-cache$"
+    "^PMT_LOCAL_TEST=1 pipeline-migration-tool --renovate-upgrades '{{{ toJSON upgrades }}}' --cache-dir /tmp/pmt-cache$"
   ],
   "updateNotScheduled": false,
   "dependencyDashboard": false
