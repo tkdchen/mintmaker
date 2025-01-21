@@ -102,7 +102,7 @@
     ],
     "postUpgradeTasks": {
       "commands": [
-        "PMT_LOCAL_TEST=1 pipeline-migration-tool --renovate-upgrades '{{{ toJSON upgrades }}}' --cache-dir /tmp/pmt-cache"
+        "PMT_LOCAL_TEST=1 pipeline-migration-tool --renovate-upgrades '[{{#each upgrades}}{\"depName\": \"{{{depName}}}\", \"currentValue\": \"{{{currentValue}}}\", \"currentDigest\": \"{{{currentDigest}}}\", \"newValue\": \"{{{newValue}}}\", \"newDigest\": \"{{{newDigest}}}\", \"packageFile\": \"{{{packageFile}}}\", \"parentDir\": \"{{{parentDir}}}\", \"depTypes\": \"{{{depTypes}}}\"}{{/each}}]' --cache-dir /tmp/pmt-cache"
       ],
       "executionMode": "branch"
     }
