@@ -72,7 +72,8 @@
       {
         "matchPackageNames": [
           "/^quay.io/redhat-appstudio-tekton-catalog//",
-          "/^quay.io/konflux-ci/tekton-catalog//"
+          "/^quay.io/konflux-ci/tekton-catalog//",
+          "/^quay.io/mytestworkload//"
         ],
         "enabled": true,
         "groupName": "Konflux references",
