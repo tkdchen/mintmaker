@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"time"
 
 	appstudiov1alpha1 "github.com/konflux-ci/application-api/api/v1alpha1"
@@ -404,6 +405,9 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 		}
 	}
 
+	// Track components for which we already created a PipelineRun
+	processedComponents := make([]string, 0)
+
 	timestamp := time.Now().UTC().Unix()
 	for _, appstudioComponent := range componentList {
 		comp, err := component.NewGitComponent(&appstudioComponent, timestamp, r.Client, ctx)
@@ -411,7 +415,23 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 			log.Error(err, fmt.Sprintf("failed to handle component: %s", appstudioComponent.Name))
 			continue
 		}
-		log.Info("creating pending PipelineRun")
+
+		// We need to create only one PipelineRun for a combination
+		// of repository+branch. We cannot use repository only,
+		// because the branch is used in Renovate's baseBranch config option.
+		branch, _ := comp.GetBranch()
+		key := fmt.Sprintf("%s/%s@%s", comp.GetHost(), comp.GetRepository(), branch)
+
+		log.Info(fmt.Sprintf("check if PipelineRun has been created for %s", key))
+
+		if slices.Contains(processedComponents, key) {
+			// PipelineRun has already been created for this repo-branch
+			continue
+		} else {
+			processedComponents = append(processedComponents, key)
+		}
+
+		log.Info(fmt.Sprintf("creating pending PipelineRun for %s", key))
 		pipelinerun, err := r.createPipelineRun(comp, ctx, registrySecret)
 		if err != nil {
 			log.Info(fmt.Sprintf("failed to create PipelineRun for %s: %s", appstudioComponent.Name, err.Error()))
