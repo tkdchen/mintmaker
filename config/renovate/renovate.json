@@ -19,6 +19,9 @@
   "customEnvVariables": {
     "GOTOOLCHAIN": "auto"
   },
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
   "additionalBranchPrefix": "{{baseBranch}}/",
   "branchPrefix": "konflux/mintmaker/",
   "enabledManagers": [
