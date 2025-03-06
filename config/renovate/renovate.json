@@ -117,7 +117,7 @@
       }
     ],
     "schedule": [
-      "after 5am on saturday"
+      "at any time"
     ],
     "postUpgradeTasks": {
       "commands": [
