@@ -94,6 +94,8 @@ func (o *MountOptions) WithOptional(optional bool) *MountOptions {
 // NewPipelineRunBuilder initializes a new PipelineRunBuilder with the given name prefix and namespace.
 // It sets the name of the PipelineRun to be generated with the provided prefix and sets its namespace.
 func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
+	var rootUser int64 = 0
+	var normalUser int64 = 1001120000
 	renovateImageURL := os.Getenv(RenovateImageEnvName)
 	if renovateImageURL == "" {
 		renovateImageURL = DefaultRenovateImageURL
@@ -109,7 +111,7 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 				PipelineSpec: &tektonv1.PipelineSpec{
 					Workspaces: []tektonv1.PipelineWorkspaceDeclaration{
 						{
-							Name: "shared-db",
+							Name: "shared-data",
 						},
 					},
 					Tasks: []tektonv1.PipelineTask{
@@ -117,29 +119,44 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 							Name: "build",
 							Workspaces: []tektonv1.WorkspacePipelineTaskBinding{
 								{
-									Name:      "shared-db",
-									Workspace: "shared-db",
+									Name:      "shared-data",
+									Workspace: "shared-data",
 								},
 							},
 							TaskSpec: &tektonv1.EmbeddedTask{
 								TaskSpec: tektonv1.TaskSpec{
 									Workspaces: []tektonv1.WorkspaceDeclaration{
 										{
-											Name: "shared-db",
+											Name: "shared-data",
 										},
 									},
 									Steps: []tektonv1.Step{
 										{
 											Name:   "prepare-db",
 											Image:  "quay.io/konflux-ci/mintmaker-osv-database:latest",
-											Script: "cp -r /data/osv-db /workspace/shared-db",
+											Script: "echo 'Copying OSV database to the shared workspace'; cp -r /data/osv-db /workspace/shared-data",
 											SecurityContext: &corev1.SecurityContext{
 												Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
 												RunAsNonRoot:             ptr.To(true),
+												RunAsUser:                &normalUser,
 												AllowPrivilegeEscalation: ptr.To(false),
-												SeccompProfile: &corev1.SeccompProfile{
-													Type: corev1.SeccompProfileTypeRuntimeDefault,
-												},
+											},
+										},
+										{
+											Name:  "prepare-rpm-cert",
+											Image: "registry.access.redhat.com/ubi9",
+											Script: "[ ! -f \"/etc/renovate/secret/rpm-activationkey\" ] && echo 'RPM secret not found. Exiting.' && exit 0;" +
+												"echo 'Generating RPM certificate and copying it to shared workspace';" +
+												"KEY_NAME=$(cat /etc/renovate/secret/rpm-activationkey);" +
+												"ORG_ID=$(cat /etc/renovate/secret/rpm-org);" +
+												"subscription-manager register --activationkey=\"$KEY_NAME\" --org=\"$ORG_ID\";" +
+												"mkdir -p /workspace/shared-data/rpm-certs;" +
+												"cp /etc/pki/entitlement/*-key.pem /workspace/shared-data/rpm-certs/key.pem;" +
+												"cp $(find /etc/pki/entitlement -maxdepth 1 -type f -name '*.pem' ! -name '*-key.pem' -print -quit) /workspace/shared-data/rpm-certs/cert.pem",
+											SecurityContext: &corev1.SecurityContext{
+												Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
+												AllowPrivilegeEscalation: ptr.To(false),
+												RunAsUser:                &rootUser,
 											},
 										},
 										{
@@ -149,10 +166,8 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 											SecurityContext: &corev1.SecurityContext{
 												Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
 												RunAsNonRoot:             ptr.To(true),
+												RunAsUser:                &normalUser,
 												AllowPrivilegeEscalation: ptr.To(false),
-												SeccompProfile: &corev1.SeccompProfile{
-													Type: corev1.SeccompProfileTypeRuntimeDefault,
-												},
 											},
 											ComputeResources: corev1.ResourceRequirements{
 												Requests: corev1.ResourceList{
@@ -183,7 +198,15 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 												},
 												{
 													Name:  "OSV_OFFLINE_ROOT_DIR",
-													Value: "/workspace/shared-db/osv-db",
+													Value: "/workspace/shared-data/osv-db",
+												},
+												{
+													Name:  "DNF_VAR_SSL_CLIENT_KEY",
+													Value: "/workspace/shared-data/rpm-certs/key.pem",
+												},
+												{
+													Name:  "DNF_VAR_SSL_CLIENT_CERT",
+													Value: "/workspace/shared-data/rpm-certs/cert.pem",
 												},
 											},
 										},
@@ -195,7 +218,7 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 				},
 				Workspaces: []tektonv1.WorkspaceBinding{
 					{
-						Name:     "shared-db",
+						Name:     "shared-data",
 						EmptyDir: &corev1.EmptyDirVolumeSource{},
 					},
 				},

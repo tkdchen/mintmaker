@@ -159,3 +159,17 @@ func (c *BaseComponent) GetRenovateBaseConfig(client client.Client, ctx context.
 	renovateBaseConfigMutex.Unlock()
 	return config, nil
 }
+
+// returns two strings, activationkey and org
+func (c *BaseComponent) GetRPMActivationKey(k8sClient client.Client, ctx context.Context) (string, string, error) {
+
+	secret := &corev1.Secret{}
+	if err := k8sClient.Get(ctx, types.NamespacedName{Namespace: c.Namespace, Name: "activation-key"}, secret); err != nil {
+		return "", "", fmt.Errorf("failed to get secret 'activation-key in namespace %s: %w", c.Namespace, err)
+	}
+	activationKey := string(secret.Data["activationkey"])
+	org := string(secret.Data["org"])
+
+	return activationKey, org, nil
+
+}

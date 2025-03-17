@@ -39,6 +39,7 @@ type GitComponent interface {
 	GetBranch() (string, error)
 	GetAPIEndpoint() string
 	GetRenovateConfig(*corev1.Secret) (string, error)
+	GetRPMActivationKey(client.Client, context.Context) (string, string, error)
 }
 
 func NewGitComponent(comp *appstudiov1alpha1.Component, timestamp int64, client client.Client, ctx context.Context) (GitComponent, error) {

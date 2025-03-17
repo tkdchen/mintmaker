@@ -225,6 +225,31 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 	}
 	resources = append(resources, renovateSecret)
 
+	// Create Secret for RPM activation key to access RPMs that require subscription
+	//
+	activationKey, org, rpmKeyErr := comp.GetRPMActivationKey(r.Client, ctx)
+	var rpmSecret *corev1.Secret = nil
+	if rpmKeyErr != nil {
+		log.Info(rpmKeyErr.Error())
+	} else {
+		rpmSecret = &corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      name + "-rpm-key",
+				Namespace: MintMakerNamespaceName,
+			},
+			Type: corev1.SecretTypeOpaque,
+			StringData: map[string]string{
+				"activationkey": activationKey,
+				"org":           org,
+			},
+		}
+
+		if err := r.Client.Create(ctx, rpmSecret); err != nil {
+			return nil, err
+		}
+		resources = append(resources, rpmSecret)
+	}
+
 	// Creating the pipelineRun definition
 	builder := tekton.NewPipelineRunBuilder(name, MintMakerNamespaceName).
 		WithLabels(map[string]string{
@@ -254,6 +279,21 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 	}
 	secretOpts := tekton.NewMountOptions().WithTaskName("build").WithStepNames([]string{"renovate"})
 	builder.WithSecret(name, "/etc/renovate/secret", secretItems, secretOpts)
+
+	if rpmKeyErr == nil {
+		rpmSecretItems := []corev1.KeyToPath{
+			{
+				Key:  "activationkey",
+				Path: "rpm-activationkey",
+			},
+			{
+				Key:  "org",
+				Path: "rpm-org",
+			},
+		}
+		rpmSecretOpts := tekton.NewMountOptions().WithTaskName("build").WithStepNames([]string{"prepare-rpm-cert"})
+		builder.WithSecret(name+"-rpm-key", "/etc/renovate/secret", rpmSecretItems, rpmSecretOpts)
+	}
 
 	// Check if a ConfigMap with the label `config.openshift.io/inject-trusted-cabundle: "true"` exists.
 	// If such a ConfigMap is found, add a volume to the PipelineRun specification to mount this ConfigMap.
@@ -301,6 +341,16 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 	}
 	if err := r.Client.Update(ctx, renovateSecret); err != nil {
 		return nil, err
+	}
+
+	// ownership for RPM secret
+	if rpmKeyErr == nil {
+		if err := controllerutil.SetOwnerReference(pipelineRun, rpmSecret, r.Scheme); err != nil {
+			return nil, err
+		}
+		if err := r.Client.Update(ctx, rpmSecret); err != nil {
+			return nil, err
+		}
 	}
 
 	// ownership for the renovateConfigMap
