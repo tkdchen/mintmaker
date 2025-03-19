@@ -226,7 +226,6 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(comp component.GitCo
 	resources = append(resources, renovateSecret)
 
 	// Create Secret for RPM activation key to access RPMs that require subscription
-	//
 	activationKey, org, rpmKeyErr := comp.GetRPMActivationKey(r.Client, ctx)
 	var rpmSecret *corev1.Secret = nil
 	if rpmKeyErr != nil {
