@@ -221,6 +221,14 @@ func NewPipelineRunBuilder(name, namespace string) *PipelineRunBuilder {
 													Name:  "RENOVATE_REDIS_URL",
 													Value: "redis://redis:6379",
 												},
+												{
+													Name:  "RENOVATE_REPOSITORY_CACHE",
+													Value: "enabled",
+												},
+												{
+													Name:  "RENOVATE_REPOSITORY_CACHE_TYPE",
+													Value: "redis://redis:6379/1",
+												},
 											},
 										},
 									},
