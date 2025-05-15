@@ -40,16 +40,16 @@ spec:
           spec:
             description: DependencyUpdateCheckSpec defines the desired state of DependencyUpdateCheck
             properties:
-              workspaces:
+              namespaces:
                 description: |-
-                  Specifies the list of workspaces for which to run MintMaker.
-                  If omitted, MintMaker will run for all workspaces.
+                  Specifies the list of namespaces for which to run MintMaker.
+                  If omitted, MintMaker will run for all namespaces.
                 items:
                   properties:
                     applications:
                       description: |-
-                        Specifies the list of applications in a workspace for which to run MintMaker.
-                        If omitted, MintMaker will run for all workspace's applications.
+                        Specifies the list of applications in a namespace for which to run MintMaker.
+                        If omitted, MintMaker will run for all namespace's applications.
                       items:
                         properties:
                           application:
@@ -71,14 +71,14 @@ spec:
                         - application
                         type: object
                       type: array
-                    workspace:
+                    namespace:
                       description: |-
-                        Specifies the name of the workspace for which to run Mintmaker.
+                        Specifies the name of the namespace for which to run Mintmaker.
                         Required.
                       pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                       type: string
                   required:
-                  - workspace
+                  - namespace
                   type: object
                 type: array
             type: object

@@ -35,15 +35,15 @@ type ApplicationSpec struct {
 	Components []Component `json:"components,omitempty"`
 }
 
-type WorkspaceSpec struct {
+type NamespaceSpec struct {
 	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-	//Specifies the name of the workspace for which to run Mintmaker.
+	//Specifies the name of the namespace for which to run Mintmaker.
 	// Required.
 	// +required
-	Workspace string `json:"workspace"`
+	Namespace string `json:"namespace"`
 
-	// Specifies the list of applications in a workspace for which to run MintMaker.
-	// If omitted, MintMaker will run for all workspace's applications.
+	// Specifies the list of applications in a namespace for which to run MintMaker.
+	// If omitted, MintMaker will run for all namespace's applications.
 	// +optional
 	Applications []ApplicationSpec `json:"applications,omitempty"`
 }
@@ -56,10 +56,10 @@ type DependencyUpdateCheckSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Specifies the list of workspaces for which to run MintMaker.
-	// If omitted, MintMaker will run for all workspaces.
+	// Specifies the list of namespaces for which to run MintMaker.
+	// If omitted, MintMaker will run for all namespaces.
 	// +optional
-	Workspaces []WorkspaceSpec `json:"workspaces,omitempty"`
+	Namespaces []NamespaceSpec `json:"namespaces,omitempty"`
 }
 
 // DependencyUpdateCheckStatus defines the observed state of DependencyUpdateCheck

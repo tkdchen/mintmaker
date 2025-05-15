@@ -407,9 +407,9 @@ func (r *DependencyUpdateCheckReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	var gatheredComponents []appstudiov1alpha1.Component
-	if len(dependencyupdatecheck.Spec.Workspaces) > 0 {
-		log.Info(fmt.Sprintf("Following components are specified: %v", dependencyupdatecheck.Spec.Workspaces))
-		gatheredComponents, err = getFilteredComponents(dependencyupdatecheck.Spec.Workspaces, r.Client, ctx)
+	if len(dependencyupdatecheck.Spec.Namespaces) > 0 {
+		log.Info(fmt.Sprintf("Following components are specified: %v", dependencyupdatecheck.Spec.Namespaces))
+		gatheredComponents, err = getFilteredComponents(dependencyupdatecheck.Spec.Namespaces, r.Client, ctx)
 		if err != nil {
 			log.Error(err, "gathering filtered components has failed")
 			return ctrl.Result{}, err
