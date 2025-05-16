@@ -22,29 +22,29 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// Get only components that match a given workspace/application/componentname
-func getFilteredComponents(workspaces []mmv1alpha1.WorkspaceSpec, apiClient client.Client, ctx context.Context) ([]appstudiov1alpha1.Component, error) {
+// Get only components that match a given namespace/application/componentname
+func getFilteredComponents(namespaces []mmv1alpha1.NamespaceSpec, apiClient client.Client, ctx context.Context) ([]appstudiov1alpha1.Component, error) {
 	components := []appstudiov1alpha1.Component{}
 	err := error(nil)
 
-	// Iterate workspaces and create query filtered by namespace ({workspace}-tenant)
-	for _, workspace := range workspaces {
-		workspaceComponentList := &appstudiov1alpha1.ComponentList{}
+	// Iterate namespaces and create query filtered by namespace
+	for _, namespace := range namespaces {
+		namespaceComponentList := &appstudiov1alpha1.ComponentList{}
 		listOps := &client.ListOptions{
-			Namespace: workspace.Workspace + "-tenant",
+			Namespace: namespace.Namespace,
 		}
-		if err := apiClient.List(ctx, workspaceComponentList, listOps); err != nil {
+		if err := apiClient.List(ctx, namespaceComponentList, listOps); err != nil {
 			return nil, err
 		}
-		// No applications specified -> add all Workspace components, start processing next workspace
-		if len(workspace.Applications) == 0 {
-			components = append(components, workspaceComponentList.Items...)
+		// No applications specified -> add all Namespace components, start processing next namespace
+		if len(namespace.Applications) == 0 {
+			components = append(components, namespaceComponentList.Items...)
 			continue
 		}
 		// Applications specified -> iterate and filter by application
-		for _, application := range workspace.Applications {
+		for _, application := range namespace.Applications {
 			appMatchingComponents := []appstudiov1alpha1.Component{}
-			for _, component := range workspaceComponentList.Items {
+			for _, component := range namespaceComponentList.Items {
 				if application.Application == component.Spec.Application {
 					appMatchingComponents = append(appMatchingComponents, component)
 				}

@@ -6,12 +6,12 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   generateName: dependencyupdatecheck-
 spec:
-  workspaces:
-  - workspace: "workspace1"
+  namespaces:
+  - namespace: "namespace1"
     applications:
     - application: "application1"
       components:
       - "component1"
       - "component2"
     - application: "application2"
-  - workspace: "workspace2"
+  - namespace: "namespace2"
