@@ -188,6 +188,7 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(name string, comp co
 	if err != nil {
 		return nil, err
 	}
+	renovateJsConfig := "module.exports = " + renovateConfig
 	// Create ConfigMap for Renovate global configuration
 	renovateConfigMap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
@@ -195,7 +196,7 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(name string, comp co
 			Namespace: MintMakerNamespaceName,
 		},
 		Data: map[string]string{
-			"renovate.json": renovateConfig,
+			"config.js": renovateJsConfig,
 		},
 	}
 
@@ -263,8 +264,8 @@ func (r *DependencyUpdateCheckReconciler) createPipelineRun(name string, comp co
 
 	cmItems := []corev1.KeyToPath{
 		{
-			Key:  "renovate.json",
-			Path: "renovate.json",
+			Key:  "config.js",
+			Path: "config.js",
 		},
 	}
 	cmOpts := tekton.NewMountOptions().WithTaskName("build").WithStepNames([]string{"renovate"})
