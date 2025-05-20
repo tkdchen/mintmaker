@@ -4,5 +4,6 @@ configMapGenerator:
 - name: renovate-config
   files:
   - renovate.json
+  - self_hosted.json
   options:
     disableNameSuffixHash: true

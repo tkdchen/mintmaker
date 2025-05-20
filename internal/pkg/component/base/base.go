@@ -143,6 +143,14 @@ func (c *BaseComponent) GetRenovateBaseConfig(client client.Client, ctx context.
 	if err := json.Unmarshal([]byte(baseConfig.Data["renovate.json"]), &config); err != nil {
 		return nil, fmt.Errorf("error unmarshaling Renovate config: %v", err)
 	}
+	var selfHostedConfig map[string]interface{}
+	if err := json.Unmarshal([]byte(baseConfig.Data["self_hosted.json"]), &selfHostedConfig); err != nil {
+		return nil, fmt.Errorf("error unmarshaling Renovate self-hosted config: %v", err)
+	}
+
+	for k, v := range selfHostedConfig {
+		config[k] = v
+	}
 
 	if registrySecret != nil {
 		hostRules, err := c.TransformHostRules(ctx, registrySecret)
