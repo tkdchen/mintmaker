@@ -17,9 +17,6 @@
   "branchConcurrentLimit": 0,
   "containerVulnerabilityAlerts": true,
   "rpmVulnerabilityAlerts": true,
-  "customEnvVariables": {
-    "GOTOOLCHAIN": "auto"
-  },
   "vulnerabilityAlerts": {
     "enabled": true
   },
