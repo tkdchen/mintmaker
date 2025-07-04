@@ -25,6 +25,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
+	"github.com/konflux-ci/mintmaker/internal/pkg/config"
 	. "github.com/konflux-ci/mintmaker/internal/pkg/constant"
 	tekton "github.com/konflux-ci/mintmaker/internal/pkg/tekton"
 )
@@ -57,6 +58,8 @@ func teardownPipelineRuns() {
 }
 
 var _ = Describe("PipelineRun Controller", func() {
+
+	MaxSimultaneousPipelineRuns := config.GetTestConfig().PipelineRunConfig.MaxParallelPipelineruns
 
 	Context("When reconciling pipelineruns", func() {
 
