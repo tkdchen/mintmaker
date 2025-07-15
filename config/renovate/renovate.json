@@ -68,7 +68,6 @@
     "gitlabci-include"
   ],
   "tekton": {
-    "additionalBranchPrefix": "",
     "fileMatch": [
       "\\.yaml$",
       "\\.yml$"
@@ -85,6 +84,7 @@
         "enabled": true,
         "groupName": "Konflux references",
         "branchPrefix": "konflux/references/",
+        "additionalBranchPrefix": "",
         "group": {
           "branchTopic": "{{{baseBranch}}}",
           "commitMessageTopic": "{{{groupName}}}"
