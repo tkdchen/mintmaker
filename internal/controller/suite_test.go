@@ -35,6 +35,7 @@ import (
 
 	//+kubebuilder:scaffold:imports
 	mmv1alpha1 "github.com/konflux-ci/mintmaker/api/v1alpha1"
+	"github.com/konflux-ci/mintmaker/internal/pkg/config"
 )
 
 const (
@@ -101,10 +102,13 @@ var _ = BeforeSuite(func() {
 	})
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (NewDependencyUpdateCheckReconciler(k8sManager.GetClient(), k8sManager.GetScheme(), k8sManager.GetEventRecorderFor("DependencyUpdateCheckController"))).SetupWithManager(k8sManager)
+	Config := config.GetConfig()
+	Expect(Config).NotTo(BeNil())
+
+	err = (NewDependencyUpdateCheckReconciler(k8sManager.GetClient(), k8sManager.GetScheme(), Config, k8sManager.GetEventRecorderFor("DependencyUpdateCheckController"))).SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&PipelineRunReconciler{Client: k8sManager.GetClient(), Scheme: k8sManager.GetScheme()}).SetupWithManager(k8sManager)
+	err = (&PipelineRunReconciler{Client: k8sManager.GetClient(), Scheme: k8sManager.GetScheme(), Config: Config}).SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = (&EventReconciler{Client: k8sManager.GetClient(), Scheme: k8sManager.GetScheme()}).SetupWithManager(k8sManager)
